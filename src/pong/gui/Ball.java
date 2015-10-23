@@ -30,23 +30,23 @@ public class Ball extends PongItem {
 		pos.translate(speed.x, speed.y);
 		setPosition(pos);
 		
-		if (getPosition().x < 0) {
-			setPosition(new Point(0, getPosition().y));
+		if (getPositionX() < 0) {
+			setPositionX(0);
 			this.speed.x = -this.speed.x;
 		}
 		
-		if (getPosition().y < 0) {
-			setPosition(new Point(getPosition().x, 0));
+		if (getPositionY() < 0) {
+			setPositionY(0);
 			this.speed.y = -this.speed.y;
 		}
 		
-		if (getPosition().x > SIZE_PONG_X - getWidth()) {
-			setPosition(new Point(getPosition().x - getWidth(), getPosition().y));
+		if (getPositionX() > SIZE_PONG_X - getWidth()) {
+			setPositionX(getPositionX() - getWidth()/2);
 			this.speed.x = -this.speed.x;
 		}
 		
-		if (getPosition().y > SIZE_PONG_Y - getHeight()) {
-			setPosition(new Point(getPosition().x, getPosition().y - getHeight()));
+		if (getPositionY() > SIZE_PONG_Y - getHeight()) {
+			setPositionY(getPositionY() - getHeight()/2);
 			this.speed.y = -this.speed.y;
 		}		
 	}

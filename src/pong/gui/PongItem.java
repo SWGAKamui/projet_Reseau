@@ -66,6 +66,14 @@ public abstract class PongItem {
 		return (Point) this.position.clone();
 	}
 	
+	public int getPositionX() {
+		return this.position.x;
+	}
+	
+	public int getPositionY() {
+		return this.position.y;
+	}
+	
 	public void setWidth(int width) {
 		this.width = width;
 	}
@@ -76,5 +84,13 @@ public abstract class PongItem {
 	
 	public void setPosition(Point position) {
 		this.position = (Point) position.clone();
+	}
+	
+	public void setPositionX(int x) {
+		this.position.x = x;
+	}
+	
+	public void setPositionY(int y) {
+		this.position.y = y;
 	}
 }

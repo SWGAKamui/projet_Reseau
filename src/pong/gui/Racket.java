@@ -14,7 +14,7 @@ public class Racket extends PongItem {
 	
 	public Racket(String path) {
 		super(path);
-		this.speed = RACKET_SPEED;
+		this.speed = 0;
 	}
 	
 	public int getSpeed() {
@@ -27,12 +27,12 @@ public class Racket extends PongItem {
 	
 	/* Update racket position */
 	public void animateRacket() {
-		setPosition(new Point(getPosition().x, getPosition().y + speed));
+		setPositionY(getPositionY() + speed);
 		
-		if (getPosition().y < 0)
-			setPosition(new Point(getPosition().x, 0));
-		if (getPosition().y > SIZE_PONG_Y - getHeight()/2)
-			setPosition(new Point(getPosition().x, SIZE_PONG_Y - getHeight()/2));
+		if (getPositionY() < 0)
+			setPositionY(0);
+		if (getPositionY() > SIZE_PONG_Y - getHeight()/2)
+			setPositionY(SIZE_PONG_Y - getHeight()/2);
 	}
 	
 	/* Event (key pressed) */
