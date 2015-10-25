@@ -25,11 +25,25 @@ public class Ball extends PongItem {
 	}
 	
 	/* Update ball position */
-	public void animateBall() {
+	public void animateBall(Racket racket) {
 		Point pos = getPosition(); // pos is a local variable
 		pos.translate(speed.x, speed.y);
 		setPosition(pos);
 		
+		/**
+		 *  Gestion du rebond sur la raquette 
+		 */
+		if ((getPositionX() <= racket.getPositionX() + racket.getWidth()) 
+			 && (getPositionY() - getHeight() <= racket.getPositionY() + racket.getHeight())
+			 && (getPositionY() + getHeight()/2 >= racket.getPositionY())) {
+			setPositionX(racket.getPositionX() + racket.getWidth());
+			this.speed.x = -this.speed.x;
+			this.speed.y = -this.speed.y;
+		}
+		
+		/**
+		 * Gestion du rebond sur les bords de l'écran
+		 */
 		if (getPositionX() < 0) {
 			setPositionX(0);
 			this.speed.x = -this.speed.x;
@@ -48,6 +62,6 @@ public class Ball extends PongItem {
 		if (getPositionY() > SIZE_PONG_Y - getHeight()) {
 			setPositionY(getPositionY() - getHeight()/2);
 			this.speed.y = -this.speed.y;
-		}		
+		}
 	}
 }

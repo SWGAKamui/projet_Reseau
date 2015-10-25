@@ -76,8 +76,8 @@ public class Pong extends JPanel implements KeyListener {
          * Proceeds to the movement of the ball and updates the screen
 	 */
 	public void animate() {
-		ball.animateBall();
 		racket.animateRacket();
+		ball.animateBall(racket);
 		
 		/* And update output */
 		updateScreen();

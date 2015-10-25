@@ -31,8 +31,8 @@ public class Racket extends PongItem {
 		
 		if (getPositionY() < 0)
 			setPositionY(0);
-		if (getPositionY() > SIZE_PONG_Y - getHeight()/2)
-			setPositionY(SIZE_PONG_Y - getHeight()/2);
+		if (getPositionY() > SIZE_PONG_Y - getHeight())
+			setPositionY(SIZE_PONG_Y - getHeight());
 	}
 	
 	/* Event (key pressed) */
