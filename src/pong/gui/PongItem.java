@@ -2,6 +2,7 @@ package pong.gui;
 
 import java.awt.Image;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 
 import javax.swing.ImageIcon;
@@ -92,5 +93,9 @@ public abstract class PongItem {
 	
 	public void setPositionY(int y) {
 		this.position.y = y;
+	}
+	
+	public Rectangle getHitBox() {
+		return new Rectangle(position.x, position.y, width, height);
 	}
 }

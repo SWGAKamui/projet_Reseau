@@ -31,7 +31,6 @@ public class Pong extends JPanel implements KeyListener {
 	 * Constant (c.f. final) common to all Pong instances (c.f. static)
 	 * defining the background color of the Pong
 	 */
-	//private static final Color backgroundColor = new Color(0xFF, 0x40, 0);
     private static final Color backgroundColor = new Color(0xC, 0x2D, 0x4E);
 
 	/**
@@ -79,9 +78,10 @@ public class Pong extends JPanel implements KeyListener {
 	}
 
 	/**
-     * Proceeds to the movement of the ball and updates the screen
+     * Proceeds to the movement of the rackets, the ball and updates the screen
 	 */
 	public void animate() {
+		
 		/* L'iterateur sert à parcourir l'ensemble des raquettes */
 		Iterator<Racket> it = setRacket.iterator();
 		while(it.hasNext()) {
@@ -91,7 +91,7 @@ public class Pong extends JPanel implements KeyListener {
 
 		ball.animateBall(setRacket);
 		
-		/* And update output */
+		/* Update output */
 		updateScreen();
 	}
 
@@ -131,6 +131,7 @@ public class Pong extends JPanel implements KeyListener {
 	 * Draw each Pong item based on new positions
 	 */
 	public void updateScreen() {
+		
 		if (buffer == null) {
 			/* First time we get called with all windows initialized */
 			buffer = createImage(SIZE_PONG_X, SIZE_PONG_Y);
@@ -139,6 +140,7 @@ public class Pong extends JPanel implements KeyListener {
 			else
 				graphicContext = buffer.getGraphics();
 		}
+		
 		/* Fill the area with blue */
 		graphicContext.setColor(backgroundColor);
 		graphicContext.fillRect(0, 0, SIZE_PONG_X, SIZE_PONG_Y);

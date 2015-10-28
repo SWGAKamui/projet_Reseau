@@ -35,17 +35,28 @@ public class Racket extends PongItem {
 		return this.player;
 	}
 	
-	/* Update racket position */
 	public void animateRacket() {
+		updatePosition();
+		checkCollisionWithSides();	
+	}
+	
+	public void updatePosition() {
 		setPositionY(getPositionY() + speed);
-		
+	}
+	
+	/**
+	 * Gestion du rebond sur les bords de l'écran 
+	 */
+	public void checkCollisionWithSides() {
 		if (getPositionY() < 0)
 			setPositionY(0);
 		if (getPositionY() > SIZE_PONG_Y - getHeight())
 			setPositionY(SIZE_PONG_Y - getHeight());
 	}
 	
-	/* Event (key pressed) */
+	/**
+	 * Event (key pressed) 
+	 */
 	public void keyPressedRacket(KeyEvent e) {
 		switch (e.getKeyCode()) {
 			case KeyEvent.VK_UP:
@@ -61,7 +72,9 @@ public class Racket extends PongItem {
 		}
 	}
 	
-	/* Event (key released) */
+	/**
+	 *  Event (key released) 
+	 */
 	public void keyReleasedRacket(KeyEvent e) {
 		switch (e.getKeyCode()) {
 	        case KeyEvent.VK_UP:

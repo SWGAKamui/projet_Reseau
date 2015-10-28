@@ -15,7 +15,7 @@ public class Ball extends PongItem {
 	
 	public Ball (String path) {
 		super(path);
-		this.speed = (Point) new Point(BALL_SPEED, BALL_SPEED);
+		this.speed = new Point(BALL_SPEED, BALL_SPEED);
 	}
 	
 	public Point getSpeed() {
@@ -26,26 +26,22 @@ public class Ball extends PongItem {
 		this.speed = (Point) speed.clone();
 	}
 	
-	/**
-	 * Update ball position 
-	 */
 	public void animateBall(Set<Racket> setRacket) {
-		Point pos = getPosition(); // pos is a local variable
-		pos.translate(speed.x, speed.y);
-		setPosition(pos);
-		
-		/* Gestion du rebond sur les raquettes */
-		Iterator<Racket> it = setRacket.iterator();
-		while(it.hasNext()) {
-			Racket racket = it.next();
-			if (checkCollision(racket)) {
-				setPositionCollision(racket);
-				this.speed.x = -this.speed.x;
-				this.speed.y = -this.speed.y;
-			}
-		}
-		
-		/* Gestion du rebond sur les bords de l'écran */
+		updatePosition();
+		checkCollisionWithSides();
+		checkVictory();
+		checkCollisionWithRackets(setRacket);
+	}
+			
+	public void updatePosition() {
+		setPositionX(getPositionX() + speed.x);
+		setPositionY(getPositionY() + speed.y);
+	}
+	
+	/**
+	 * Gestion du rebond sur les bords de l'écran 
+	 */
+	public void checkCollisionWithSides() {
 		if (getPositionX() < 0) {
 			setPositionX(0);
 			this.speed.x = -this.speed.x;
@@ -66,28 +62,28 @@ public class Ball extends PongItem {
 			this.speed.y = -this.speed.y;
 		}
 	}
+	
+	public void checkVictory() {
+	}
 
 	/**
-	 *  Vérifie si une collision a eu lieu avec la raquette (chaque raquette a une zone de collision différente)
-	 *  Code à factoriser
+	 * Gestion du rebond sur les raquettes
 	 */
-	public boolean checkCollision(Racket racket) {
-		if (racket.getPlayer() == 1) {
-			return (getPositionX() <= racket.getPositionX() + racket.getWidth()) 
-					&& (getPositionY() + getHeight() >= racket.getPositionY())
-					&& (getPositionY() <= racket.getPositionY() + racket.getHeight());
+	public void checkCollisionWithRackets(Set<Racket> setRacket) {
+		Iterator<Racket> it = setRacket.iterator();
+		while(it.hasNext()) {
+			Racket racket = it.next();
+			if (this.getHitBox().intersects(racket.getHitBox())) {
+				setPositionCollision(racket);
+				this.speed.x = -this.speed.x;
+				this.speed.y = -this.speed.y;
+			}
 		}
-		
-		
-		if (racket.getPlayer() == 2) {
-			return (getPositionX() + getWidth() >= racket.getPositionX())
-					&& (getPositionY() + getHeight() >= racket.getPositionY())
-					&& (getPositionY() <= racket.getPositionY() + racket.getHeight());
-		}
-		
-		return false; // tmp
 	}
 	
+	/**
+	 * Met à jour la position de la balle après un rebond sur la raquette
+	 */
 	public void setPositionCollision(Racket racket) {
 		if (racket.getPlayer() == 1) {
 			setPositionX(racket.getPositionX() + racket.getWidth());
