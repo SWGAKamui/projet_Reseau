@@ -10,12 +10,18 @@ public class Racket extends PongItem {
 	 */
 	public static final int RACKET_SPEED = 4;
 	
+	private int player;
 	private int speed;
 	
-	public Racket(String path) {
+	public Racket(String path, int player) {
 		super(path);
+		this.player = player;
 		this.speed = 0;
-	}
+		
+		if (this.player == 2) {
+			setPositionX(SIZE_PONG_X - getWidth());
+		}
+	} 
 	
 	public int getSpeed() {
 		return this.speed;
@@ -23,6 +29,10 @@ public class Racket extends PongItem {
 	
 	public void setSpeed(int speed) {
 		this.speed = speed;
+	}
+	
+	public int getPlayer() {
+		return this.player;
 	}
 	
 	/* Update racket position */
@@ -51,6 +61,7 @@ public class Racket extends PongItem {
 		}
 	}
 	
+	/* Event (key released) */
 	public void keyReleasedRacket(KeyEvent e) {
 		switch (e.getKeyCode()) {
 	        case KeyEvent.VK_UP:

@@ -1,6 +1,8 @@
 package pong.gui;
 
 import java.awt.Point;
+import java.util.Iterator;
+import java.util.Set;
 
 public class Ball extends PongItem {
 	
@@ -24,26 +26,26 @@ public class Ball extends PongItem {
 		this.speed = (Point) speed.clone();
 	}
 	
-	/* Update ball position */
-	public void animateBall(Racket racket) {
+	/**
+	 * Update ball position 
+	 */
+	public void animateBall(Set<Racket> setRacket) {
 		Point pos = getPosition(); // pos is a local variable
 		pos.translate(speed.x, speed.y);
 		setPosition(pos);
 		
-		/**
-		 *  Gestion du rebond sur la raquette 
-		 */
-		if ((getPositionX() <= racket.getPositionX() + racket.getWidth()) 
-			 && (getPositionY() - getHeight() <= racket.getPositionY() + racket.getHeight())
-			 && (getPositionY() + getHeight()/2 >= racket.getPositionY())) {
-			setPositionX(racket.getPositionX() + racket.getWidth());
-			this.speed.x = -this.speed.x;
-			this.speed.y = -this.speed.y;
+		/* Gestion du rebond sur les raquettes */
+		Iterator<Racket> it = setRacket.iterator();
+		while(it.hasNext()) {
+			Racket racket = it.next();
+			if (checkCollision(racket)) {
+				setPositionCollision(racket);
+				this.speed.x = -this.speed.x;
+				this.speed.y = -this.speed.y;
+			}
 		}
 		
-		/**
-		 * Gestion du rebond sur les bords de l'écran
-		 */
+		/* Gestion du rebond sur les bords de l'écran */
 		if (getPositionX() < 0) {
 			setPositionX(0);
 			this.speed.x = -this.speed.x;
@@ -64,4 +66,36 @@ public class Ball extends PongItem {
 			this.speed.y = -this.speed.y;
 		}
 	}
+
+	/**
+	 *  Vérifie si une collision a eu lieu avec la raquette (chaque raquette a une zone de collision différente)
+	 *  Code à factoriser
+	 */
+	public boolean checkCollision(Racket racket) {
+		if (racket.getPlayer() == 1) {
+			return (getPositionX() <= racket.getPositionX() + racket.getWidth()) 
+					&& (getPositionY() + getHeight() >= racket.getPositionY())
+					&& (getPositionY() <= racket.getPositionY() + racket.getHeight());
+		}
+		
+		
+		if (racket.getPlayer() == 2) {
+			return (getPositionX() + getWidth() >= racket.getPositionX())
+					&& (getPositionY() + getHeight() >= racket.getPositionY())
+					&& (getPositionY() <= racket.getPositionY() + racket.getHeight());
+		}
+		
+		return false; // tmp
+	}
+	
+	public void setPositionCollision(Racket racket) {
+		if (racket.getPlayer() == 1) {
+			setPositionX(racket.getPositionX() + racket.getWidth());
+		}
+		
+		if (racket.getPlayer() == 2) {
+			setPositionX(racket.getPositionX() - getWidth());
+		}
+	}
+	
 }

@@ -8,9 +8,14 @@ import java.awt.Toolkit;
 import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+
 import javax.swing.ImageIcon;
+
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.JPanel;
 
@@ -46,11 +51,11 @@ public class Pong extends JPanel implements KeyListener {
 	 * Object Ball 
 	 */
 	private Ball ball;
-	
+		
 	/**
-	 * Object Racket
+	 * Ensemble contenant les objets Racket (une raquette par joueur)
 	 */
-	private Racket racket;
+	private Set<Racket> setRacket;
 
 	/**
 	 * Pixel data buffer for the Pong rendering
@@ -63,32 +68,47 @@ public class Pong extends JPanel implements KeyListener {
 
 
 	public Pong() {
-		ImageIcon icon;
-
 		this.ball = new Ball("image/ball.png");
-		this.racket = new Racket("image/racket.png");
+		
+		this.setRacket = new HashSet<Racket>();
+		setRacket.add(new Racket("image/racket.png", 1));
+		setRacket.add(new Racket("image/racket.png", 2));
 		
 		this.setPreferredSize(new Dimension(SIZE_PONG_X, SIZE_PONG_Y));
 		this.addKeyListener(this);
 	}
 
 	/**
-         * Proceeds to the movement of the ball and updates the screen
+     * Proceeds to the movement of the ball and updates the screen
 	 */
 	public void animate() {
-		racket.animateRacket();
-		ball.animateBall(racket);
+		/* L'iterateur sert à parcourir l'ensemble des raquettes */
+		Iterator<Racket> it = setRacket.iterator();
+		while(it.hasNext()) {
+			Racket racket = it.next();
+			racket.animateRacket();
+		}
+
+		ball.animateBall(setRacket);
 		
 		/* And update output */
 		updateScreen();
 	}
 
 	public void keyPressed(KeyEvent e) {
-		racket.keyPressedRacket(e);
+		Iterator<Racket> it = setRacket.iterator();
+		while(it.hasNext()) {
+			Racket racket = it.next();
+			racket.keyPressedRacket(e);
+		}
 	}
 	
 	public void keyReleased(KeyEvent e) {
-		racket.keyReleasedRacket(e);
+		Iterator<Racket> it = setRacket.iterator();
+		while(it.hasNext()) {
+			Racket racket = it.next();
+			racket.keyReleasedRacket(e);
+		}
 	}
 	public void keyTyped(KeyEvent e) { }
 
@@ -125,8 +145,13 @@ public class Pong extends JPanel implements KeyListener {
 
 		/* Draw items */
 		graphicContext.drawImage(ball.getImg(), ball.getPosition().x, ball.getPosition().y, ball.getWidth(), ball.getHeight(), null);
-		graphicContext.drawImage(racket.getImg(), racket.getPosition().x, racket.getPosition().y, racket.getWidth(), racket.getHeight(), null);
-
+		
+		Iterator<Racket> it = setRacket.iterator();
+		while(it.hasNext()) {
+			Racket racket = it.next();
+			graphicContext.drawImage(racket.getImg(), racket.getPosition().x, racket.getPosition().y, racket.getWidth(), racket.getHeight(), null);
+		}
+		
 		this.repaint();
 	}
 }
