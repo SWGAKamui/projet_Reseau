@@ -3,25 +3,38 @@ package pong.gui;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 
-public class Racket extends PongItem {
+public class Racket extends PongItem implements Cloneable {
 	
 	/**
 	 * Speed of racket (in pixels per second)
 	 */
 	public static final int RACKET_SPEED = 4;
 	
-	private int player;
+	private PlayerID playerID;
 	private int speed;
 	
-	public Racket(String path, int player) {
+	public Racket(String path, PlayerID playerID) {
 		super(path);
-		this.player = player;
+		this.playerID = playerID;
 		this.speed = 0;
 		
-		if (this.player == 2) {
+		if (this.playerID == PlayerID.TWO) {
 			setPositionX(SIZE_PONG_X - getWidth());
 		}
 	} 
+	
+	public Object clone() {
+	    try {
+	    	return super.clone();
+	    } catch (CloneNotSupportedException cnse) {
+	    	System.out.println(cnse);
+	    	return null;
+	    }
+	}
+	
+	public PlayerID getPlayerID() {
+		return this.playerID;
+	}
 	
 	public int getSpeed() {
 		return this.speed;
@@ -29,10 +42,6 @@ public class Racket extends PongItem {
 	
 	public void setSpeed(int speed) {
 		this.speed = speed;
-	}
-	
-	public int getPlayer() {
-		return this.player;
 	}
 	
 	public void animateRacket() {

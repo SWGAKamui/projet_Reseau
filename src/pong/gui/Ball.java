@@ -4,13 +4,15 @@ import java.awt.Point;
 import java.util.Iterator;
 import java.util.Set;
 
+import javax.swing.JOptionPane;
+
 public class Ball extends PongItem {
 	
 	/**
 	 * Speed of ball (in pixels per second)
 	 */
 	private static final int BALL_SPEED = 2;
-	
+		
 	private Point speed;
 	
 	public Ball (String path) {
@@ -26,11 +28,10 @@ public class Ball extends PongItem {
 		this.speed = (Point) speed.clone();
 	}
 	
-	public void animateBall(Set<Racket> setRacket) {
+	public void animateBall(Set<Player> setPlayers) {
 		updatePosition();
-		checkCollisionWithSides();
-		checkVictory();
-		checkCollisionWithRackets(setRacket);
+		checkCollisionWithSides(setPlayers);
+		checkCollisionWithRackets(setPlayers);
 	}
 			
 	public void updatePosition() {
@@ -41,8 +42,9 @@ public class Ball extends PongItem {
 	/**
 	 * Gestion du rebond sur les bords de l'écran 
 	 */
-	public void checkCollisionWithSides() {
+	public void checkCollisionWithSides(Set<Player> setPlayers) {
 		if (getPositionX() < 0) {
+			updateScore(setPlayers, PlayerID.ONE);
 			setPositionX(0);
 			this.speed.x = -this.speed.x;
 		}
@@ -53,6 +55,7 @@ public class Ball extends PongItem {
 		}
 		
 		if (getPositionX() > SIZE_PONG_X - getWidth()) {
+			updateScore(setPlayers, PlayerID.TWO);
 			setPositionX(getPositionX() - getWidth()/2);
 			this.speed.x = -this.speed.x;
 		}
@@ -63,16 +66,28 @@ public class Ball extends PongItem {
 		}
 	}
 	
-	public void checkVictory() {
+	/**
+	 * On parcourt l'ensemble des joueurs, et on incrémente le score de chacun d'eux sauf celui
+	 * dont la bordure vient d'être touchée
+	 */
+	public void updateScore(Set<Player> setPlayers, PlayerID playerID) {
+		Iterator<Player> it = setPlayers.iterator();
+		while(it.hasNext()) {
+			Player player = it.next();
+			if (player.playerID != playerID) {
+				player.increaseScore();
+			}
+		}	
 	}
-
+	
 	/**
 	 * Gestion du rebond sur les raquettes
 	 */
-	public void checkCollisionWithRackets(Set<Racket> setRacket) {
-		Iterator<Racket> it = setRacket.iterator();
+	public void checkCollisionWithRackets(Set<Player> setPlayers) {
+		Iterator<Player> it = setPlayers.iterator();
 		while(it.hasNext()) {
-			Racket racket = it.next();
+			Player player = it.next();
+			Racket racket = player.getRacket();
 			if (this.getHitBox().intersects(racket.getHitBox())) {
 				setPositionCollision(racket);
 				this.speed.x = -this.speed.x;
@@ -85,11 +100,11 @@ public class Ball extends PongItem {
 	 * Met à jour la position de la balle après un rebond sur la raquette
 	 */
 	public void setPositionCollision(Racket racket) {
-		if (racket.getPlayer() == 1) {
+		if (racket.getPlayerID() == PlayerID.ONE) {
 			setPositionX(racket.getPositionX() + racket.getWidth());
 		}
 		
-		if (racket.getPlayer() == 2) {
+		if (racket.getPlayerID() == PlayerID.TWO) {
 			setPositionX(racket.getPositionX() - getWidth());
 		}
 	}

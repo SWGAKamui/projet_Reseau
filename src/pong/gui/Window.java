@@ -12,7 +12,7 @@ public class Window extends JFrame {
 	/**
 	 * Pong component to be displayed
 	 */
-	private final Pong pong;
+	private Pong pong;
 
 	/**
 	 * Constructor
@@ -33,6 +33,9 @@ public class Window extends JFrame {
 		setVisible(true);
 
 		while(true) {
+			if (pong.checkVictory()) {
+				break;
+			}
 			pong.animate();
 			try {
 				Thread.sleep(pong.timestep);

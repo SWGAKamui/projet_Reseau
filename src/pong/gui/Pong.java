@@ -10,6 +10,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -34,6 +35,11 @@ public class Pong extends JPanel implements KeyListener {
     private static final Color backgroundColor = new Color(0xC, 0x2D, 0x4E);
 
 	/**
+	 * Score à obtenir pour remporter la partie
+	 */
+	private static final int SCORE_TO_WIN = 10;
+	
+	/**
 	 * Width of pong area
 	 */
 	public static final int SIZE_PONG_X = 800;
@@ -45,16 +51,17 @@ public class Pong extends JPanel implements KeyListener {
 	 * Time step of the simulation (in ms)
 	 */
 	public static final int timestep = 10;
-
+	
 	/**
 	 * Object Ball 
 	 */
 	private Ball ball;
 		
 	/**
-	 * Ensemble contenant les objets Racket (une raquette par joueur)
+	 * Ensemble contenant les joueurs. 
+	 * Chaque joueur est composé de différents champs (score, socket, etc.), notamment le champ Racket (une raquette par joueur)
 	 */
-	private Set<Racket> setRacket;
+	private Set<Player> setPlayers;
 
 	/**
 	 * Pixel data buffer for the Pong rendering
@@ -69,9 +76,9 @@ public class Pong extends JPanel implements KeyListener {
 	public Pong() {
 		this.ball = new Ball("image/ball.png");
 		
-		this.setRacket = new HashSet<Racket>();
-		setRacket.add(new Racket("image/racket.png", 1));
-		setRacket.add(new Racket("image/racket.png", 2));
+		this.setPlayers = new HashSet<Player>();
+		setPlayers.add(new Player(PlayerID.ONE));
+		setPlayers.add(new Player(PlayerID.TWO));
 		
 		this.setPreferredSize(new Dimension(SIZE_PONG_X, SIZE_PONG_Y));
 		this.addKeyListener(this);
@@ -82,32 +89,38 @@ public class Pong extends JPanel implements KeyListener {
 	 */
 	public void animate() {
 		
-		/* L'iterateur sert à parcourir l'ensemble des raquettes */
-		Iterator<Racket> it = setRacket.iterator();
+		/* L'iterateur sert à parcourir l'ensemble des joueurs, donc l'ensemble des raquettes */
+		Iterator<Player> it = setPlayers.iterator();
 		while(it.hasNext()) {
-			Racket racket = it.next();
+			Player player = it.next();
+			Racket racket = player.getRacket();
 			racket.animateRacket();
+			player.setRacket(racket);
 		}
 
-		ball.animateBall(setRacket);
+		ball.animateBall(setPlayers);
 		
 		/* Update output */
 		updateScreen();
 	}
 
 	public void keyPressed(KeyEvent e) {
-		Iterator<Racket> it = setRacket.iterator();
+		Iterator<Player> it = setPlayers.iterator();
 		while(it.hasNext()) {
-			Racket racket = it.next();
+			Player player = it.next();
+			Racket racket = player.getRacket();
 			racket.keyPressedRacket(e);
+			player.setRacket(racket);
 		}
 	}
 	
 	public void keyReleased(KeyEvent e) {
-		Iterator<Racket> it = setRacket.iterator();
+		Iterator<Player> it = setPlayers.iterator();
 		while(it.hasNext()) {
-			Racket racket = it.next();
+			Player player = it.next();
+			Racket racket = player.getRacket();
 			racket.keyReleasedRacket(e);
+			player.setRacket(racket);
 		}
 	}
 	public void keyTyped(KeyEvent e) { }
@@ -148,12 +161,25 @@ public class Pong extends JPanel implements KeyListener {
 		/* Draw items */
 		graphicContext.drawImage(ball.getImg(), ball.getPosition().x, ball.getPosition().y, ball.getWidth(), ball.getHeight(), null);
 		
-		Iterator<Racket> it = setRacket.iterator();
+		Iterator<Player> it = setPlayers.iterator();
 		while(it.hasNext()) {
-			Racket racket = it.next();
+			Player player = it.next();
+			Racket racket = player.getRacket();
 			graphicContext.drawImage(racket.getImg(), racket.getPosition().x, racket.getPosition().y, racket.getWidth(), racket.getHeight(), null);
 		}
 		
 		this.repaint();
+	}
+	
+	public boolean checkVictory() {
+		Iterator<Player> it = setPlayers.iterator();
+		while(it.hasNext()) {
+			Player player = it.next();
+			if (player.score == SCORE_TO_WIN) {
+				JOptionPane.showMessageDialog(null, "Player" + player.playerID.toString() + "wins", "Pong", JOptionPane.PLAIN_MESSAGE);
+				return true;
+			}
+		}
+		return false;	
 	}
 }
