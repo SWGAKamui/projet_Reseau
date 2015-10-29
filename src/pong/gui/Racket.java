@@ -8,13 +8,14 @@ public class Racket extends PongItem implements Cloneable {
 	/**
 	 * Speed of racket (in pixels per second)
 	 */
+	private static final String PATH = "image/racket.png"; 
 	public static final int RACKET_SPEED = 4;
 	
 	private PlayerID playerID;
 	private int speed;
 	
-	public Racket(String path, PlayerID playerID) {
-		super(path);
+	public Racket(PlayerID playerID) {
+		super(PATH);
 		this.playerID = playerID;
 		this.speed = 0;
 		

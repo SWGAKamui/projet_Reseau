@@ -12,11 +12,12 @@ public class Ball extends PongItem {
 	 * Speed of ball (in pixels per second)
 	 */
 	private static final int BALL_SPEED = 2;
+	private static final String PATH = "image/ball.png"; 
 		
 	private Point speed;
 	
-	public Ball (String path) {
-		super(path);
+	public Ball () {
+		super(PATH);
 		this.speed = new Point(BALL_SPEED, BALL_SPEED);
 	}
 	
