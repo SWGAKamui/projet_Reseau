@@ -48,7 +48,6 @@ public abstract class PongItem {
 		this.icon = new ImageIcon(img);		
 		this.width = icon.getIconWidth();
 		this.height = icon.getIconHeight();
-		this.position = new Point(0,0);
 	}
 	
 	public int getWidth() {

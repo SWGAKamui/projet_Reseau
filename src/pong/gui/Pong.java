@@ -72,9 +72,9 @@ public class Pong extends JPanel implements KeyListener {
 	 */
 	private Graphics graphicContext = null;
 
-
+	
 	public Pong() {
-		this.ball = new Ball("image/ball.png");
+		this.ball = new Ball();
 		
 		this.setPlayers = new HashSet<Player>();
 		setPlayers.add(new Player(PlayerID.ONE));

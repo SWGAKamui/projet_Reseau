@@ -9,15 +9,24 @@ import javax.swing.JOptionPane;
 public class Ball extends PongItem {
 	
 	/**
+	 * Path of the ball img
+	 */
+	public static final String PATH_BALL = "image/ball.png";
+	
+	/**
 	 * Speed of ball (in pixels per second)
 	 */
 	private static final int BALL_SPEED = 2;
+	
 		
 	private Point speed;
 	
-	public Ball (String path) {
-		super(path);
+	public Ball () {
+		super(PATH_BALL);
 		this.speed = new Point(BALL_SPEED, BALL_SPEED);
+		
+		/* On place la balle au milieu de l'écran */
+		setPosition(new Point(SIZE_PONG_X/2, SIZE_PONG_Y/2));
 	}
 	
 	public Point getSpeed() {
@@ -91,7 +100,6 @@ public class Ball extends PongItem {
 			if (this.getHitBox().intersects(racket.getHitBox())) {
 				setPositionCollision(racket);
 				this.speed.x = -this.speed.x;
-				this.speed.y = -this.speed.y;
 			}
 		}
 	}
@@ -100,13 +108,17 @@ public class Ball extends PongItem {
 	 * Met à jour la position de la balle après un rebond sur la raquette
 	 */
 	public void setPositionCollision(Racket racket) {
-		if (racket.getPlayerID() == PlayerID.ONE) {
-			setPositionX(racket.getPositionX() + racket.getWidth());
-		}
+		switch (racket.getPlayerID()) {
+			case ONE:
+				setPositionX(racket.getPositionX() + racket.getWidth());
+				break;
 		
-		if (racket.getPlayerID() == PlayerID.TWO) {
-			setPositionX(racket.getPositionX() - getWidth());
+			case TWO:
+				setPositionX(racket.getPositionX() - getWidth());
+				break;
+			
+			default:
+				break;
 		}
-	}
-	
+	}	
 }

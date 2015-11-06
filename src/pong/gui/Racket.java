@@ -6,6 +6,11 @@ import java.awt.event.KeyEvent;
 public class Racket extends PongItem implements Cloneable {
 	
 	/**
+	 * Path of the racket img
+	 */
+	public static final String PATH_RACKET = "image/racket.png";
+	
+	/**
 	 * Speed of racket (in pixels per second)
 	 */
 	public static final int RACKET_SPEED = 4;
@@ -13,13 +18,23 @@ public class Racket extends PongItem implements Cloneable {
 	private PlayerID playerID;
 	private int speed;
 	
-	public Racket(String path, PlayerID playerID) {
-		super(path);
+	public Racket(PlayerID playerID) {
+		super(PATH_RACKET);
 		this.playerID = playerID;
 		this.speed = 0;
 		
-		if (this.playerID == PlayerID.TWO) {
-			setPositionX(SIZE_PONG_X - getWidth());
+		/* Initialisation de la position de la raquette en fonction du joueur */
+		switch (this.playerID) {
+			case ONE:
+				setPosition(new Point(0,SIZE_PONG_Y/2));
+				break;
+			
+		    case TWO:
+		    	setPosition(new Point(SIZE_PONG_X - getWidth(), SIZE_PONG_Y/2));
+		    	break;
+		    	
+		    default:
+		    	break;
 		}
 	} 
 	

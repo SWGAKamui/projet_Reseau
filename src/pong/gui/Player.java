@@ -13,7 +13,7 @@ public class Player {
 	public Player(PlayerID playerID) {
 		this.playerID = playerID;
 		this.score = 0;
-		this.racket = new Racket("image/racket.png", playerID);
+		this.racket = new Racket(playerID);
 	}
 	
 	public Racket getRacket() {

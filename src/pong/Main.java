@@ -8,6 +8,7 @@ import pong.gui.Pong;
  */
 public class Main  {
 	
+	/* javac Main host port */
 	public static void main(String[] args) {
 		Pong pong = new Pong();
 		Window window = new Window(pong);
