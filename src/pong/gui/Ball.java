@@ -17,7 +17,6 @@ public class Ball extends PongItem {
 	 * Speed of ball (in pixels per second)
 	 */
 	private static final int BALL_SPEED = 2;
-	
 		
 	private Point speed;
 	
