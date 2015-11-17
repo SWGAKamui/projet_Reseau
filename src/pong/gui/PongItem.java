@@ -7,7 +7,7 @@ import java.awt.Toolkit;
 
 import javax.swing.ImageIcon;
 
-public abstract class PongItem {
+public abstract class PongItem implements Cloneable {
 	/**
 	 * Width of pong area
 	 */
@@ -48,6 +48,18 @@ public abstract class PongItem {
 		this.icon = new ImageIcon(img);		
 		this.width = icon.getIconWidth();
 		this.height = icon.getIconHeight();
+	}
+	
+	public Object clone() {
+		PongItem pongItem = null;
+		try {
+			pongItem = (PongItem) super.clone();
+			pongItem.position = (Point) position.clone();
+			return pongItem;			
+		} catch(CloneNotSupportedException cnse) {
+			System.err.println(cnse);
+		}
+		return pongItem;					
 	}
 	
 	public int getWidth() {

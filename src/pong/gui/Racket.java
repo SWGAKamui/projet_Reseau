@@ -3,7 +3,7 @@ package pong.gui;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 
-public class Racket extends PongItem implements Cloneable {
+public class Racket extends PongItem {
 	
 	/**
 	 * Path of the racket img
@@ -23,7 +23,7 @@ public class Racket extends PongItem implements Cloneable {
 		this.playerID = playerID;
 		this.speed = 0;
 		
-		/* Initialisation de la position de la raquette en fonction du joueur */
+		/* Position par défaut de la raquette en fonction du joueur */
 		switch (this.playerID) {
 			case ONE:
 				setPosition(new Point(0,SIZE_PONG_Y/2));
@@ -36,17 +36,16 @@ public class Racket extends PongItem implements Cloneable {
 		    default:
 		    	break;
 		}
-	} 
-	
-	public Object clone() {
-	    try {
-	    	return super.clone();
-	    } catch (CloneNotSupportedException cnse) {
-	    	System.out.println(cnse);
-	    	return null;
-	    }
 	}
 	
+	public Racket(PlayerID playerID, int positionRacketX, int positionRacketY) {
+		super(PATH_RACKET);
+		this.playerID = playerID;
+		this.speed = 0;
+		
+		setPosition(new Point(positionRacketX, positionRacketY));
+	} 
+		
 	public PlayerID getPlayerID() {
 		return this.playerID;
 	}

@@ -24,7 +24,7 @@ public class Window extends JFrame {
 
 	/**
 	 * Displays the Window using the defined margins, and call the
-	 * {@link Pong#animate()} method of the {@link Pong} every 100ms
+	 * {@link Pong#animate()} method of the {@link Pong} every 10ms
 	 */
 	public void displayOnscreen() {
 		add(pong);
@@ -36,9 +36,9 @@ public class Window extends JFrame {
 			if (pong.checkVictory()) {
 				break;
 			}
-			pong.animate();
+			pong.mainLoop();
 			try {
-				Thread.sleep(pong.timestep);
+				Thread.sleep(Pong.timestep);
 			} catch (InterruptedException e) {};
 		}
 	}

@@ -4,8 +4,6 @@ import java.awt.Point;
 import java.util.Iterator;
 import java.util.Set;
 
-import javax.swing.JOptionPane;
-
 public class Ball extends PongItem {
 	
 	/**
@@ -19,15 +17,21 @@ public class Ball extends PongItem {
 	private static final int BALL_SPEED = 2;
 		
 	private Point speed;
-	
-	public Ball () {
+		
+	public Ball() {
 		super(PATH_BALL);
 		this.speed = new Point(BALL_SPEED, BALL_SPEED);
 		
-		/* On place la balle au milieu de l'écran */
+		/* On place la balle au milieu de l'écran par défaut */
 		setPosition(new Point(SIZE_PONG_X/2, SIZE_PONG_Y/2));
 	}
 	
+	public Object clone() {
+		Ball ball = (Ball) super.clone();
+		ball.speed = (Point) speed.clone();
+		return ball;
+	}
+		
 	public Point getSpeed() {
 		return (Point) this.speed.clone();
 	}
@@ -82,7 +86,7 @@ public class Ball extends PongItem {
 		Iterator<Player> it = setPlayers.iterator();
 		while(it.hasNext()) {
 			Player player = it.next();
-			if (player.playerID != playerID) {
+			if (player.getPlayerID() != playerID) {
 				player.increaseScore();
 			}
 		}	
@@ -97,23 +101,24 @@ public class Ball extends PongItem {
 			Player player = it.next();
 			Racket racket = player.getRacket();
 			if (this.getHitBox().intersects(racket.getHitBox())) {
-				setPositionCollision(racket);
-				this.speed.x = -this.speed.x;
+				setCollision(racket);
 			}
 		}
 	}
 	
 	/**
-	 * Met à jour la position de la balle après un rebond sur la raquette
+	 * Met à jour la position et la vitesse de la balle après un rebond sur la raquette
 	 */
-	public void setPositionCollision(Racket racket) {
+	public void setCollision(Racket racket) {
 		switch (racket.getPlayerID()) {
 			case ONE:
 				setPositionX(racket.getPositionX() + racket.getWidth());
+				this.speed.x = -this.speed.x;
 				break;
 		
 			case TWO:
 				setPositionX(racket.getPositionX() - getWidth());
+				this.speed.x = -this.speed.x;
 				break;
 			
 			default:

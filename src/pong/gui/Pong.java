@@ -3,19 +3,14 @@ package pong.gui;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
-import java.awt.Point;
-import java.awt.Toolkit;
 import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 import javax.swing.JPanel;
@@ -56,13 +51,23 @@ public class Pong extends JPanel implements KeyListener {
 	 * Object Ball 
 	 */
 	private Ball ball;
-		
+	
+	/**
+	 * Joueur local
+	 */
+	private LocalPlayer localPlayer;
+	
 	/**
 	 * Ensemble contenant les joueurs. 
 	 * Chaque joueur est composé de différents champs (score, socket, etc.), notamment le champ Racket (une raquette par joueur)
 	 */
-	private Set<Player> setPlayers;
-
+	protected Set<Player> setPlayers;
+	
+	/**
+	 * Gère l'envoi et la reception des requêtes, implémentation du protocole (délégation)
+	 */
+	private ProtocolHandler protocolHandler;
+	
 	/**
 	 * Pixel data buffer for the Pong rendering
 	 */
@@ -72,57 +77,98 @@ public class Pong extends JPanel implements KeyListener {
 	 */
 	private Graphics graphicContext = null;
 
-	
+	/* Instanciation de la partie du premier joueur */
 	public Pong() {
-		this.ball = new Ball();
-		
+		this.protocolHandler = new ProtocolHandler(this);
 		this.setPlayers = new HashSet<Player>();
-		setPlayers.add(new Player(PlayerID.ONE));
-		setPlayers.add(new Player(PlayerID.TWO));
+		this.localPlayer = new LocalPlayer(this);
+		setPlayers.add(localPlayer);
+		
+		this.ball = new Ball();
+		this.setPreferredSize(new Dimension(SIZE_PONG_X, SIZE_PONG_Y));
+		this.addKeyListener(this);
+	}
+	
+	/* Instanciation de la partie des autres joueurs */
+	public Pong(String host, int port) {
+		this.protocolHandler = new ProtocolHandler(this);
+		this.ball = new Ball();
+		this.setPlayers = new HashSet<Player>();
+		this.localPlayer = new LocalPlayer(this, host, port);
+		setPlayers.add(localPlayer);
+		
+		String payload = receiveNewInfo();
+		this.updateGame(payload);
+		
+		/* On connait maintenant l'ensemble des autres joueurs distants auxquels on doit se connecter */
+		localPlayer.updateLocalPlayer();
 		
 		this.setPreferredSize(new Dimension(SIZE_PONG_X, SIZE_PONG_Y));
 		this.addKeyListener(this);
 	}
 
 	/**
-     * Proceeds to the movement of the rackets, the ball and updates the screen
+	 * Mainloop
 	 */
-	public void animate() {
-		
-		/* L'iterateur sert à parcourir l'ensemble des joueurs, donc l'ensemble des raquettes */
-		Iterator<Player> it = setPlayers.iterator();
-		while(it.hasNext()) {
-			Player player = it.next();
-			Racket racket = player.getRacket();
-			racket.animateRacket();
-			player.setRacket(racket);
-		}
-
-		ball.animateBall(setPlayers);
-		
-		/* Update output */
+	public void mainLoop() {
+		checkNewConnexion();
+		calculate();
+		sendNewInfo();
+		String payload = receiveNewInfo();
+		checkNewInfo(payload);
+		updateGame(payload);
 		updateScreen();
 	}
-
-	public void keyPressed(KeyEvent e) {
-		Iterator<Player> it = setPlayers.iterator();
-		while(it.hasNext()) {
-			Player player = it.next();
-			Racket racket = player.getRacket();
-			racket.keyPressedRacket(e);
-			player.setRacket(racket);
+	
+	public void checkNewConnexion() {
+	}
+	
+	/**
+     * Proceeds to the movement of the racket of the local player and the ball (only if it is in control area of local player)
+	 */
+	public void calculate() {
+		
+		Racket racket = localPlayer.getRacket();
+		racket.animateRacket();
+		localPlayer.setRacket(racket);
+		
+		if (localPlayer.getPlayerID() == PlayerID.ONE) {
+			ball.animateBall(setPlayers);
 		}
 	}
 	
-	public void keyReleased(KeyEvent e) {
-		Iterator<Player> it = setPlayers.iterator();
-		while(it.hasNext()) {
-			Player player = it.next();
-			Racket racket = player.getRacket();
-			racket.keyReleasedRacket(e);
-			player.setRacket(racket);
-		}
+	public void sendNewInfo() {
+		protocolHandler.sendNewInfoProtocol();
 	}
+	
+	public String receiveNewInfo() {
+		return localPlayer.readFromAll();
+	}
+	
+	public void checkNewInfo(String payload) {
+		// On vérifie la légitimité des données reçues
+	}
+	
+	/**
+	 * On traite la requête reçue à l'aide de la classe ProtocolHandler
+	 */
+	public void updateGame(String payload) {
+		protocolHandler.setPayload(payload);
+		protocolHandler.run();
+	}
+	
+	public void keyPressed(KeyEvent e) {
+		Racket racket = localPlayer.getRacket();
+		racket.keyPressedRacket(e);
+		localPlayer.setRacket(racket);
+	}
+	
+	public void keyReleased(KeyEvent e) {
+		Racket racket = localPlayer.getRacket();
+		racket.keyReleasedRacket(e);
+		localPlayer.setRacket(racket);
+	}
+	
 	public void keyTyped(KeyEvent e) { }
 
 	/*
@@ -175,11 +221,34 @@ public class Pong extends JPanel implements KeyListener {
 		Iterator<Player> it = setPlayers.iterator();
 		while(it.hasNext()) {
 			Player player = it.next();
-			if (player.score == SCORE_TO_WIN) {
-				JOptionPane.showMessageDialog(null, "Player" + player.playerID.toString() + "wins", "Pong", JOptionPane.PLAIN_MESSAGE);
+			if (player.getScore() == SCORE_TO_WIN) {
+				JOptionPane.showMessageDialog(null, "Player" + player.getPlayerID() + "wins", "Pong", JOptionPane.PLAIN_MESSAGE);
 				return true;
 			}
 		}
 		return false;	
+	}
+	
+	/* Accesseurs */
+	
+	public Ball getBall() {
+		return (Ball) this.ball.clone();
+	}
+	
+	public void setBall(Ball ball) {
+		this.ball = (Ball) ball.clone();
+	}
+	
+	/* Pas d'encapsulation volontairement */
+	public LocalPlayer getLocalPlayer() {
+		return this.localPlayer;
+	}
+	
+	public String getInitialGameProtocol() {
+		return protocolHandler.getInitialGameProtocol();
+	}
+	
+	public String getLocalPlayerProtocol() {
+		return protocolHandler.getLocalPlayerProtocol();
 	}
 }
