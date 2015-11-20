@@ -19,16 +19,16 @@ public class Test {
 		racket.setPositionY(5);
 		ball.setPositionX(0);
 		ball.setPositionY(5);
-		double ball_speed_X=ball.getSpeed().getX();
-		double ball_speed_Y=ball.getSpeed().getY();
+		double ball_speed_X = ball.getSpeed().getX();
+		double ball_speed_Y = ball.getSpeed().getY();
 		
 		
 		if(racket.getPositionX() == ball.getPositionX()){
 			if(racket.getPositionY() == ball.getPositionY()){
 				ball.animateBall(setPlayers);
 				if((racket.getPositionX() + racket.getWidth()) == ball.getPositionX()){
-					if(ball.getSpeed().getX()== (- ball_speed_X)){
-						if(ball.getSpeed().getY()== (- ball_speed_Y)){
+					if(ball.getSpeed().getX() == (- ball_speed_X)){
+						if(ball.getSpeed().getY() == (- ball_speed_Y)){
 							System.out.println("Tout va bien");
 						}
 						else{

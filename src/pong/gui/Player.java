@@ -24,6 +24,11 @@ public class Player {
 		this.racket = (Racket) racket.clone();
 	}
 	
+	public int getScore(){
+		return this.score;
+	}
+	
+	
 	public void increaseScore() {
 		this.score++;
 	}
