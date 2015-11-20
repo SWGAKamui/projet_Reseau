@@ -60,9 +60,6 @@ public class Pong extends JPanel implements KeyListener {
 	 */
 	private Ball ball;
 	
-	private Test_print testprint;
-	private String test;
-		
 	/**
 	 * Ensemble contenant les joueurs. 
 	 * Chaque joueur est composé de différents champs (score, socket, etc.), notamment le champ Racket (une raquette par joueur)
@@ -82,8 +79,7 @@ public class Pong extends JPanel implements KeyListener {
 	private Player player2;
 	
 	public Pong() {
-		this.testprint = new Test_print();
-		this.test = testprint.getString();
+
 		this.ball = new Ball();
 		
 		this.player1 = new Player(PlayerID.ONE);
@@ -156,7 +152,6 @@ public class Pong extends JPanel implements KeyListener {
 	 */
 	public void updateScreen() {
 		Font f = new Font("Dialog", Font.PLAIN, 20);
-		Font ftest = new Font("Dialog", Font.PLAIN, 10);
 		if (buffer == null) {
 			/* First time we get called with all windows initialized */
 			buffer = createImage(SIZE_PONG_X, SIZE_PONG_Y);
@@ -170,13 +165,10 @@ public class Pong extends JPanel implements KeyListener {
 		graphicContext.setColor(backgroundColor);
 		graphicContext.fillRect(0, 0, SIZE_PONG_X, SIZE_PONG_Y);
 		graphicContext.setColor(fontColor);
+		graphicContext.setFont(f);
 
 		/* Draw items */
-		if( player1.score == 0 && player2.score ==0){
-			graphicContext.setFont(ftest);
-			graphicContext.drawString(test, 50, 50);
-		}
-		graphicContext.setFont(f);
+	
 		graphicContext.drawString(Integer.toString(player1.getScore()),SIZE_PONG_X/3,50);
 		graphicContext.drawString(Integer.toString(player2.getScore()),2*(SIZE_PONG_X)/3,50);
 		graphicContext.drawString("Score", (SIZE_PONG_X/2)-4*("Score".length()), 50);
