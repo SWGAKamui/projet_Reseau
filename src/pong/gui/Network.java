@@ -4,71 +4,67 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-public class LocalPlayer extends Player {
+public class Network {
 	
 	private Pong pong;
 	
-	private PongServerSocket pss; // Serveur créé par le nouveau joueur
+	private PongServerSocket pss; // Serveur créé 
 	protected Set<PongClientSocket> setPs; // Ensemble contenant les sockets de connexion vers les autres serveurs
 	
-	/* Premier joueur (local) */
-	public LocalPlayer(Pong pong) {
-		super(PlayerID.ONE);
-		
+	private String localHost;
+	private int localPort;
+	
+	/* Premier joueur */
+	public Network(Pong pong) {	
 		this.pong = pong;
-				
+		this.localPort = 7777;
 		this.setPs = new HashSet<PongClientSocket>();
 		this.pss = new PongServerSocket(this);
 		pss.initServer();
 	}
 	
-	/* Les autres joueurs (local) */
-	public LocalPlayer(Pong pong, String host, int port) {
-		super();
-		
+	/* Les autres joueurs */
+	public Network(Pong pong, String host, int port) {
 		this.pong = pong;
-		
+		this.localPort = 7778;
 		this.setPs = new HashSet<PongClientSocket>();
 		this.pss = new PongServerSocket(this);
 		pss.initServer();
-		
+
 		/* On se connecte au joueur donné pour récupérer les informations sur la partie */
 		PongClientSocket ps = new PongClientSocket(host, port);
 		ps.connect();
 		setPs.add(ps);
 	}
 	
-	public String getInitialGameProtocol() {
-		return pong.getInitialGameProtocol();
+	
+	public String getLocalHost() {
+		return this.localHost;
 	}
-		
-	public PlayerID selectPlayerID() {
-		int cpt = 0;
-		Iterator<Player> it = pong.setPlayers.iterator();
-		while(it.hasNext()) {
-			Player player = it.next();
-			cpt++;
-		}
-		switch (cpt) {
-			case 0:
-				return PlayerID.ONE;
-			case 1:
-				return PlayerID.TWO;
-			case 2:
-				return PlayerID.THREE;
-			case 3:
-				return PlayerID.FOUR;
-			default:
-				return PlayerID.FULL;
-		}
+	
+	public int getLocalPort() {
+		return this.localPort;
 	}
+	
+	public void setLocalHost(String localHost) {
+		this.localHost = localHost;
+	}
+	
+	public void setLocalPort(int localPort) {
+		this.localPort = localPort;
+	}		
 	
 	public String readFromAll() {
 		String payload = null;
 		Iterator<PongClientSocket> it = setPs.iterator();
 		while(it.hasNext()) {
 			PongClientSocket ps = it.next();
-			payload = ps.readBr();
+			payload = ps.readIn();
+			
+			/* On a reçu une requête */
+			if (payload != null) {
+				return payload;
+			}
 		}
 		return payload;
 	}
@@ -77,14 +73,12 @@ public class LocalPlayer extends Player {
 		Iterator<PongClientSocket> it = setPs.iterator();
 		while(it.hasNext()) {
 			PongClientSocket ps = it.next();
-			ps.writePs(string);
+			ps.writeOut(string);
 		}			
 	}
 	
-	public void updateLocalPlayer() {
-		this.connectToAll();
-		this.setPlayerID(selectPlayerID());
-		this.setRacket(new Racket(getPlayerID()));
+	public void checkNewConnexion() {
+		pss.checkNewConnexion();
 	}
 	
 	/**
@@ -96,7 +90,7 @@ public class LocalPlayer extends Player {
 		while(ite.hasNext()) {
 			PongClientSocket ps = ite.next();
 			ps.disconnect();
-		}			
+		}
 		
 		/* Puis on se connecte à tous les autres joueurs */
 		Iterator<Player> it = pong.setPlayers.iterator();
@@ -109,10 +103,8 @@ public class LocalPlayer extends Player {
 			PongClientSocket ps = new PongClientSocket(host, port);
 			setPs.add(ps);
 			
-			ps.connect();
-			
 			/* On envoie les informations du nouveau joueur à chaque joueur auquel on se connecte */
-			ps.writePs(pong.getLocalPlayerProtocol());
+			ps.writeOut(pong.getLocalPlayerProtocol());
 		}
 	}
 }

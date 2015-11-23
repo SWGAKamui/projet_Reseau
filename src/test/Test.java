@@ -14,7 +14,7 @@ public class Test {
 		Racket racket = new Racket (PlayerID.ONE);
 		Set<Player> setPlayers;
 		setPlayers = new HashSet<Player>();
-		setPlayers.add(new Player(PlayerID.ONE));
+		setPlayers.add(new Player(PlayerID.ONE, null, 0));
 		
 		racket.setPositionY(5);
 		ball.setPositionX(0);

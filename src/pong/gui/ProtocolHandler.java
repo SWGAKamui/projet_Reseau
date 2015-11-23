@@ -23,7 +23,9 @@ public class ProtocolHandler {
 	public void run() {
 		switch (tab[0]) {
 			case "init":
-				protocolInit();
+				protocolInitGame();		
+			case "gameinfo":
+				protocolGameInfo();
 				break;
 			case "newplayer":
 				protocolNewPlayer();
@@ -40,26 +42,42 @@ public class ProtocolHandler {
 		}		
 	}
 	
-	public void protocolInit() {
-		/* On place la balle à la bonne position */
-		int positionBallX = Integer.parseInt(tab[1]);
-		int positionBallY = Integer.parseInt(tab[2]);
-		Ball ball = pong.getBall();
-		ball.setPosition(new Point(positionBallX, positionBallY));
-		pong.setBall(ball);
+	public void protocolInitGame() {
+		StringBuffer sb = new StringBuffer();
+		sb.append("gameinfo" + "," + getBallInfo(pong.getBall()));
 		
-		/* On instancie tous les joueurs distants */
-		for(int i = 3 ; i < tab.length ; i++) {
-			String[] curPlayer = tab[i].split(";");
-			PlayerID playerID = PlayerID.valueOf(curPlayer[0]);
-			int score = Integer.parseInt(curPlayer[1]);
-			int positionRacketX = Integer.parseInt(curPlayer[2]);
-			int positionRacketY = Integer.parseInt(curPlayer[3]);
-			String host = curPlayer[4];
-			int port = Integer.parseInt(curPlayer[5]);
+		Iterator<Player> it = pong.setPlayers.iterator();
+		while(it.hasNext()) {
+			Player player = it.next();
+			sb.append("," + getNetworkPlayerInfo(player));
+		}					
+		pong.getNetwork().sendToAll(sb.toString());
+	}
+	
+	public void protocolGameInfo() {
+		/* On vérifie que c'est bien la première fois qu'on reçoit les informations (pour cela on regarde 
+		 * si l'ensemble des joueurs est vide) */
+		if (pong.setPlayers.isEmpty()) {
+			/* On place la balle à la bonne position */
+			int positionBallX = Integer.parseInt(tab[1]);
+			int positionBallY = Integer.parseInt(tab[2]);
+			Ball ball = pong.getBall();
+			ball.setPosition(new Point(positionBallX, positionBallY));
+			pong.setBall(ball);
 			
-			Player player = new Player(playerID, score, positionRacketX, positionRacketY, host, port);
-			pong.setPlayers.add(player);
+			/* On instancie tous les joueurs distants */
+			for(int i = 3 ; i < tab.length ; i++) {
+				String[] curPlayer = tab[i].split(";");
+				PlayerID playerID = PlayerID.valueOf(curPlayer[0]);
+				int score = Integer.parseInt(curPlayer[1]);
+				int positionRacketX = Integer.parseInt(curPlayer[2]);
+				int positionRacketY = Integer.parseInt(curPlayer[3]);
+				String host = curPlayer[4];
+				int port = Integer.parseInt(curPlayer[5]);
+				
+				Player player = new Player(playerID, score, positionRacketX, positionRacketY, host, port);
+				pong.setPlayers.add(player);
+			}
 		}
 	}
 	
@@ -107,6 +125,7 @@ public class ProtocolHandler {
 		int positionRacketX = Integer.parseInt(curPlayer[2]);
 		int positionRacketY = Integer.parseInt(curPlayer[3]);
 		
+		/* On met à jour la position du joueur */
 		Iterator<Player> it = pong.setPlayers.iterator();
 		while(it.hasNext()) {
 			Player player = it.next();
@@ -120,49 +139,75 @@ public class ProtocolHandler {
 	
 	/* TRAITEMENT EN ENVOI */
 
+	/* Dans les méthodes suivantes, le passage d'un player en paramètre est volontaire afin de rendre 
+	 * le protocole indépendant du reste du code
+	 */
+	
+	public String getPlayerInfo(Player player) {
+		return (player.getPlayerID() + ";" +
+				player.getScore() + ";" +
+				player.getRacket().getPositionX() + ";" +
+				player.getRacket().getPositionY());
+	}
+	
+	public String getNetworkPlayerInfo(Player player) {
+		return (getPlayerInfo(player) + ";" +
+				player.getHost() + ";" +
+				player.getPort());
+	}
+	
+	public String getBallInfo(Ball ball) {
+		return (ball.getPositionX() + "," + 
+				ball.getPositionY());
+	}
+	
 	/**
 	 * Send position of the racket of the local player and position of the ball (if it is in control area of local player)
 	 */	
 	public void sendNewInfoProtocol() {
-		pong.getLocalPlayer().sendToAll("player" + "," + pong.getLocalPlayer().getPlayerInfo());
+		pong.getNetwork().sendToAll("player" + "," + getPlayerInfo(pong.getLocalPlayer()));
 		
 		if (pong.getLocalPlayer().getPlayerID() == PlayerID.ONE) {
 			StringBuffer sb = new StringBuffer();
-			sb.append("ball" + "," + 
-					   pong.getBall().getPositionX() + "," + 
-					   pong.getBall().getPositionY());
+			sb.append("ball" + "," + getBallInfo(pong.getBall()));
+			
 			/* On ajoute aussi les scores */
 			Iterator<Player> it = pong.setPlayers.iterator();
 			while(it.hasNext()) {
 				Player player = it.next();
-				sb.append("," + player.getPlayerInfo());
+				sb.append("," + getPlayerInfo(player));
 			}
-			
-			pong.getLocalPlayer().sendToAll(sb.toString());
+			pong.getNetwork().sendToAll(sb.toString());
 		}
 	}
 	
+	public void initGame() { 
+		/* On indique au joueur auquel on vient de se connecter qu'on veut récupérer les informations sur la partie */
+		this.initGameInfo();
+		
+		/* On récupère les informations de la partie (requête "gameinfo") */
+		String payload = pong.receiveNewInfo();
+		while (payload == null || !(payload.split(",")[0].equals("gameinfo"))) {
+			payload = pong.receiveNewInfo();
+		}
+		
+		/* Puis on met celle-ci à jour */
+		this.setPayload(payload);
+		this.run();
+	}
+	
 	/**
-	 * This method is used when a player is connecting to another player for the first time
+	 * Used to warn other player that you want to get initial game info (first time)
 	 */
-	public String getInitialGameProtocol() {
-		StringBuffer sb = new StringBuffer();
-		sb.append("init" + "," +
-				   pong.getBall().getPositionX() + "," + 
-				   pong.getBall().getPositionY());
-		Iterator<Player> it = pong.setPlayers.iterator();
-		while(it.hasNext()) {
-			Player player = it.next();
-			sb.append("," + player.getNetworkPlayerInfo());
-		}					
-		return sb.toString();
+	public void initGameInfo() {
+		pong.getNetwork().sendToAll("init");
 	}
 	
 	/**
 	 * This method is used to warn other players that this player is new in the game
 	 */
 	public String getLocalPlayerProtocol() {
-		return ("newplayer" + "," + pong.getLocalPlayer().getNetworkPlayerInfo());
+		return ("newplayer" + "," + getNetworkPlayerInfo(pong.getLocalPlayer()));
 	}
 }
 			

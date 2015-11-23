@@ -55,7 +55,12 @@ public class Pong extends JPanel implements KeyListener {
 	/**
 	 * Joueur local
 	 */
-	private LocalPlayer localPlayer;
+	private Player localPlayer;
+	
+	/**
+	 * Gestion du réseau
+	 */
+	private Network network;
 	
 	/**
 	 * Ensemble contenant les joueurs. 
@@ -80,33 +85,33 @@ public class Pong extends JPanel implements KeyListener {
 	/* Instanciation de la partie du premier joueur */
 	public Pong() {
 		this.protocolHandler = new ProtocolHandler(this);
-		this.setPlayers = new HashSet<Player>();
-		this.localPlayer = new LocalPlayer(this);
-		setPlayers.add(localPlayer);
-		
 		this.ball = new Ball();
+		this.setPlayers = new HashSet<Player>();	
+		this.network = new Network(this);
+		this.localPlayer = new Player(PlayerID.ONE, network.getLocalHost(), network.getLocalPort());
 		this.setPreferredSize(new Dimension(SIZE_PONG_X, SIZE_PONG_Y));
 		this.addKeyListener(this);
+		
+		setPlayers.add(localPlayer);
 	}
 	
 	/* Instanciation de la partie des autres joueurs */
 	public Pong(String host, int port) {
 		this.protocolHandler = new ProtocolHandler(this);
 		this.ball = new Ball();
-		this.setPlayers = new HashSet<Player>();
-		this.localPlayer = new LocalPlayer(this, host, port);
-		setPlayers.add(localPlayer);
-		
-		String payload = receiveNewInfo();
-		this.updateGame(payload);
-		
-		/* On connait maintenant l'ensemble des autres joueurs distants auxquels on doit se connecter */
-		localPlayer.updateLocalPlayer();
-		
+		this.setPlayers = new HashSet<Player>();		
+		this.network = new Network(this, host, port);
 		this.setPreferredSize(new Dimension(SIZE_PONG_X, SIZE_PONG_Y));
 		this.addKeyListener(this);
+		
+		/* On initialise la partie */
+		protocolHandler.initGame();
+		
+		this.localPlayer = new Player(selectPlayerID(), network.getLocalHost(), network.getLocalPort());
+		network.connectToAll();	
+		setPlayers.add(localPlayer);
 	}
-
+	
 	/**
 	 * Mainloop
 	 */
@@ -121,6 +126,7 @@ public class Pong extends JPanel implements KeyListener {
 	}
 	
 	public void checkNewConnexion() {
+		network.checkNewConnexion();
 	}
 	
 	/**
@@ -142,7 +148,7 @@ public class Pong extends JPanel implements KeyListener {
 	}
 	
 	public String receiveNewInfo() {
-		return localPlayer.readFromAll();
+		return network.readFromAll();
 	}
 	
 	public void checkNewInfo(String payload) {
@@ -153,8 +159,11 @@ public class Pong extends JPanel implements KeyListener {
 	 * On traite la requête reçue à l'aide de la classe ProtocolHandler
 	 */
 	public void updateGame(String payload) {
-		protocolHandler.setPayload(payload);
-		protocolHandler.run();
+		if (payload != null) {
+			System.out.println("Reception : " + payload);
+			protocolHandler.setPayload(payload);
+			protocolHandler.run();
+		}
 	}
 	
 	public void keyPressed(KeyEvent e) {
@@ -190,7 +199,6 @@ public class Pong extends JPanel implements KeyListener {
 	 * Draw each Pong item based on new positions
 	 */
 	public void updateScreen() {
-		
 		if (buffer == null) {
 			/* First time we get called with all windows initialized */
 			buffer = createImage(SIZE_PONG_X, SIZE_PONG_Y);
@@ -229,6 +237,27 @@ public class Pong extends JPanel implements KeyListener {
 		return false;	
 	}
 	
+	public PlayerID selectPlayerID() {
+		int cpt = 0;
+		Iterator<Player> it = setPlayers.iterator();
+		while(it.hasNext()) {
+			Player player = it.next();
+			cpt++;
+		}
+		switch (cpt) {
+			case 0:
+				return PlayerID.ONE;
+			case 1:
+				return PlayerID.TWO;
+			case 2:
+				return PlayerID.THREE;
+			case 3:
+				return PlayerID.FOUR;
+			default:
+				return PlayerID.FULL;
+		}
+	}
+	
 	/* Accesseurs */
 	
 	public Ball getBall() {
@@ -239,13 +268,14 @@ public class Pong extends JPanel implements KeyListener {
 		this.ball = (Ball) ball.clone();
 	}
 	
-	/* Pas d'encapsulation volontairement */
-	public LocalPlayer getLocalPlayer() {
-		return this.localPlayer;
+	/* Pas d'encapsulation volontairement A FAIRE */
+	public Network getNetwork() {
+		return this.network;
 	}
 	
-	public String getInitialGameProtocol() {
-		return protocolHandler.getInitialGameProtocol();
+	/* Encapsulation à faire */
+	public Player getLocalPlayer() {
+		return this.localPlayer;
 	}
 	
 	public String getLocalPlayerProtocol() {

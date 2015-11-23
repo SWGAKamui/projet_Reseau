@@ -15,19 +15,14 @@ public class Player {
 	private int port;
 	
 	/* Utilisé pour instancier le premier joueur local */
-	public Player(PlayerID playerID) {
+	public Player(PlayerID playerID, String host, int port) {
 		this.playerID = playerID;
 		this.score = 0;
 		this.racket = new Racket(playerID);
-		this.port = 7777;
+		this.host = host;
+		this.port = port;
 	}
-	
-	/* Utilisé pour instancier les autres joueurs locaux, dont on ne connait pas le playerID au départ */
-	public Player() {
-		this.score = 0;	
-		this.port = 7778;
-	}
-	
+		
 	/* Utilisé pour instancier les joueurs distants */
 	public Player(PlayerID playerID, int score, int positionRacketX, int positionRacketY, String host, int port) {
 		this.playerID = playerID;
@@ -36,20 +31,7 @@ public class Player {
 		this.host = host;
 		this.port = port;
 	}
-	
-	public String getPlayerInfo() {
-		return (playerID + ";" +
-				score + ";" +
-				racket.getPositionX() + ";" +
-				racket.getPositionY() + ";");
-	}
-	
-	public String getNetworkPlayerInfo() {
-		return (getPlayerInfo() + ";" +
-				host + ";" +
-				port);
-	}
-	
+		
 	public PlayerID getPlayerID() {
 		return this.playerID;
 	}
