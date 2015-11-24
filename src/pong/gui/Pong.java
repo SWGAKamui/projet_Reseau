@@ -103,10 +103,10 @@ public class Pong extends JPanel implements KeyListener {
 		this.network = new Network(this, host, port);
 		this.setPreferredSize(new Dimension(SIZE_PONG_X, SIZE_PONG_Y));
 		this.addKeyListener(this);
-		
+		System.out.println("Instanciation OK");
 		/* On initialise la partie */
 		protocolHandler.initGame();
-		
+
 		this.localPlayer = new Player(selectPlayerID(), network.getLocalHost(), network.getLocalPort());
 		network.connectToAll();	
 		setPlayers.add(localPlayer);
@@ -116,7 +116,6 @@ public class Pong extends JPanel implements KeyListener {
 	 * Mainloop
 	 */
 	public void mainLoop() {
-		checkNewConnexion();
 		calculate();
 		sendNewInfo();
 		String payload = receiveNewInfo();
@@ -124,11 +123,7 @@ public class Pong extends JPanel implements KeyListener {
 		updateGame(payload);
 		updateScreen();
 	}
-	
-	public void checkNewConnexion() {
-		network.checkNewConnexion();
-	}
-	
+		
 	/**
      * Proceeds to the movement of the racket of the local player and the ball (only if it is in control area of local player)
 	 */
@@ -148,7 +143,7 @@ public class Pong extends JPanel implements KeyListener {
 	}
 	
 	public String receiveNewInfo() {
-		return network.readFromAll();
+		return network.receiveNewInfo();
 	}
 	
 	public void checkNewInfo(String payload) {

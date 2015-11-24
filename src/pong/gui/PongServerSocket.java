@@ -1,49 +1,51 @@
 package pong.gui;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
-import java.net.Socket;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
-
-/* A REVOIR */
 
 public class PongServerSocket {
 	
 	private ServerSocketChannel ssc;
-	private Network network;
+	private String localHost;
+	private int localPort;
 	
-	public PongServerSocket(Network network) {
-		this.network = network;
+	public PongServerSocket(int localPort) {
+		this.localPort = localPort;
+		initServer();
 	}
-			
-	/** On utilise le système de channel avec select pour ne pas rendre le accept et le read bloquants et éviter d'utiliser les
-	 * threads (problème de synchronisation)
-	 */
+	
+	public ServerSocketChannel getServerSocketChannel() {
+		return this.ssc;
+	}
+	
+	public String getLocalHost() {
+		return this.localHost;
+	}
+	
 	public void initServer() {
 		try {
-			ssc = ServerSocketChannel.open();
-			ServerSocket listen = ssc.socket();
-			listen.bind(new InetSocketAddress(network.getLocalPort()));
-			network.setLocalHost(listen.getInetAddress().getHostAddress());
+			this.ssc = ServerSocketChannel.open();
 			ssc.configureBlocking(false);
+			ServerSocket listen = ssc.socket();
+			listen.bind(new InetSocketAddress(localPort));
+			this.localHost = listen.getInetAddress().getHostAddress();
 		} catch(Exception e){
-            System.err.println("Cannot create server. Invalid port error : " + network.getLocalPort());
+            System.err.println("Cannot create server. Invalid port error : " + localPort);
             System.exit(1);
 		}
 	}
 	
-	public void checkNewConnexion() {
+	public SocketChannel accept() {
+		SocketChannel sc = null;
 		try {
-			SocketChannel sc = ssc.accept();
-			if (sc != null) {
-				Socket client = sc.socket();
-				client.setTcpNoDelay(true);
-				PongClientSocket ps = new PongClientSocket(client);
-				network.setPs.add(ps);
-			} 
-		} catch (Exception e) {
-			System.err.println("Cannot connect.");
+			sc = ssc.accept();
+		} catch (IOException e) {
+			System.err.println("Cannot connect (accept failed).");
+			System.exit(1);
 		}
+		return sc;
 	}
 }

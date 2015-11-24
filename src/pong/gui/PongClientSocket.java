@@ -6,13 +6,15 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.net.InetSocketAddress;
+import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketException;
-
-/* A REVOIR */
+import java.nio.channels.ServerSocketChannel;
+import java.nio.channels.SocketChannel;
 
 public class PongClientSocket {
 
+	private SocketChannel sc;
 	private Socket socket;
 	private String host;
 	private int port;
@@ -24,28 +26,42 @@ public class PongClientSocket {
 		this.port = port;
 		connect();
 		createStream();
-		}
+		disableNagleBlocking();
+	}
 	
-	/* Utilisé pour les connexions créées par le serveur */
-	public PongClientSocket(Socket socket) {
-		this.socket = socket;
+	/* Utilisé pour les connexions déjà créées par le serveur */
+	public PongClientSocket(SocketChannel sc) {
+		this.sc = sc;
+		this.socket = sc.socket();
 		this.host = socket.getInetAddress().getHostAddress();
 		this.port = socket.getPort();
 		createStream();
+		disableNagleBlocking();
 	}
 	
-	public Socket getSocket() {
-		return this.socket;
+	public SocketChannel getSocketChannel() {
+		return this.sc;
 	}
 	
-	public void connect() {
+	public void connect() {		
 		try {
-			this.socket = new Socket(host, port);
-			socket.setTcpNoDelay(true);
+			this.sc = SocketChannel.open();
+			this.socket = sc.socket();
+			socket.connect(new InetSocketAddress(host, port));
 			} catch (IOException e) {
 				System.err.println("Cannot connect. Host :" + host + "\tPort : " + port);
 	            System.exit(1);
 			}
+	}
+	
+	public void disableNagleBlocking() {
+		try {
+			sc.configureBlocking(false);
+			socket.setTcpNoDelay(true);
+		} catch (IOException e) {
+			System.err.println("Cannot disable Nagle or set Socket Channel in unblocking mode.");
+			System.exit(1);
+		}
 	}
 		
 	public void disconnect() {
@@ -71,7 +87,7 @@ public class PongClientSocket {
 	}
 		
 	public void writeOut(String payload) {
-		System.out.println("Envoi :" + payload);
+		System.out.println("Envoi : " + payload);
 		ps.println(payload);
 		ps.flush();
 	}
