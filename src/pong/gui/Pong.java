@@ -103,7 +103,7 @@ public class Pong extends JPanel implements KeyListener {
 		this.network = new Network(this, host, port);
 		this.setPreferredSize(new Dimension(SIZE_PONG_X, SIZE_PONG_Y));
 		this.addKeyListener(this);
-		System.out.println("Instanciation OK");
+		
 		/* On initialise la partie */
 		protocolHandler.initGame();
 

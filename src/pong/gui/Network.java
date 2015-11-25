@@ -97,6 +97,7 @@ public class Network {
 		Iterator<SelectionKey> it = keys.iterator();
 		while (it.hasNext()) {
 			SelectionKey key = it.next();
+			it.remove();
 			
 			/* Check d'une nouvelle connexion */
 			if (key.isAcceptable()) {
@@ -110,8 +111,9 @@ public class Network {
 			if (key.isReadable()) {
 				SocketChannel sc = (SocketChannel) key.channel();
 				payload = readRequest(sc);
+				/* On a pu lire notre requête, on la retourne donc directement pour la traiter */
+				break;
 			}
-			it.remove();
 		}
 		return payload;
 	}

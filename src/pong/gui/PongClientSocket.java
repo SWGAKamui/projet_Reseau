@@ -1,16 +1,14 @@
 package pong.gui;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.PrintStream;
 import java.net.InetSocketAddress;
-import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.channels.ServerSocketChannel;
+import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
+
 
 public class PongClientSocket {
 
@@ -18,14 +16,13 @@ public class PongClientSocket {
 	private Socket socket;
 	private String host;
 	private int port;
-	private BufferedReader br;
-	private PrintStream ps;
+	private ByteBuffer buf;
 	
 	public PongClientSocket(String host, int port) {
 		this.host = host;
 		this.port = port;
+		this.buf = ByteBuffer.allocate(256);
 		connect();
-		createStream();
 		disableNagleBlocking();
 	}
 	
@@ -35,7 +32,7 @@ public class PongClientSocket {
 		this.socket = sc.socket();
 		this.host = socket.getInetAddress().getHostAddress();
 		this.port = socket.getPort();
-		createStream();
+		this.buf = ByteBuffer.allocateDirect(256);
 		disableNagleBlocking();
 	}
 	
@@ -66,8 +63,6 @@ public class PongClientSocket {
 		
 	public void disconnect() {
 		try {
-			ps.close();
-			br.close();
 			socket.close();
 		} catch (IOException e){
             System.err.println("Could not close I/O Streams or socket.");
@@ -75,33 +70,51 @@ public class PongClientSocket {
 		}
 	}
 	
+	/* Read à modifier, ne lit pas forcement toute la requête */
 	public String readIn() {
 		String payload = null;
+		buf.flip();
+		
 		try {
-			payload = br.readLine();
+			sc.read(buf);
+			payload = convertBufToString();
 		} catch (IOException e) {
 			System.err.println("Cannot read from server " + host);
 			System.exit(1);
 		}
+		
 		return payload;
 	}
 		
 	public void writeOut(String payload) {
-		System.out.println("Envoi : " + payload);
-		ps.println(payload);
-		ps.flush();
+		try {
+			buf.clear();
+			buf.put(payload.getBytes("UTF-8"));
+			buf.flip();
+			System.out.println("Write payload : " + payload);
+			
+			while(buf.hasRemaining()) {
+				sc.write(buf);
+			}
+		} catch (Exception e) {
+			System.err.println("Cannot write to server " + host);
+			System.exit(1);
+		}
 	}
 	
-	public void createStream() {
+	public String convertBufToString() {
+		String payload = null;
+		
+		buf.flip();
+		
 		try {
-			InputStream is = socket.getInputStream();
-			OutputStream os = socket.getOutputStream();
-			
-			br = new BufferedReader(new InputStreamReader(is, "utf-8"));
-			ps = new PrintStream(os, false, "utf-8");
-		} catch(IOException e){
-            System.err.println("Cannot create stream or buffer. Host :" + host + "\tPort : " + port);
-            System.exit(1);
-		}		
+		Charset charset = Charset.forName( "UTF-8" );
+		CharsetDecoder decoder = charset.newDecoder();
+		payload = decoder.decode(buf).toString();
+		} catch (CharacterCodingException e) {
+			System.err.println("Cannot convert from ByteBuffer to String.");
+			System.exit(1);
+		}
+		return payload;
 	}
 }

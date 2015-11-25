@@ -188,6 +188,7 @@ public class ProtocolHandler {
 		/* On récupère les informations de la partie (requête "gameinfo") */
 		String payload = pong.receiveNewInfo();
 		while (payload == null || !(payload.split(",")[0].equals("gameinfo"))) {
+			System.out.println("My payload for init is : " + payload);
 			payload = pong.receiveNewInfo();
 		}
 		

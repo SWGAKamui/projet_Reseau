@@ -42,6 +42,7 @@ public class PongServerSocket {
 		SocketChannel sc = null;
 		try {
 			sc = ssc.accept();
+			sc.configureBlocking(false);
 		} catch (IOException e) {
 			System.err.println("Cannot connect (accept failed).");
 			System.exit(1);
