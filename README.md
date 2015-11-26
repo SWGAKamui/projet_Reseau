@@ -9,19 +9,19 @@
       
 ### Aborescence du projet :
       - image :
-          - ball.png
-          - racket.png
+            - ball.png
+            - racket.png
       - pong :
-          - gui :
-              - Ball.java
-              - Player.java
-              - PlayerID.java
-              - Pong.java
-              - PongItem.java
-              - Racket.java
-              - Window.java
-          - util :
-              - RandomNumber.java
-          - Main.jva
+            - gui :
+                    - Ball.java
+                  - Player.java
+                  - PlayerID.java
+                  - Pong.java
+                  - PongItem.java
+                  - Racket.java
+                  - Window.java
+            - util :
+                    - RandomNumber.java
+            - Main.jva
       - test :
-          - Test.java
+            - Test.java
