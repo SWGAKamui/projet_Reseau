@@ -5,7 +5,7 @@
 ### Pour lancer le pong :
       make run
 ### Pour lancer les tests :
-      - make test
+      make test
       
 ### Aborescence du projet :
       - image :
