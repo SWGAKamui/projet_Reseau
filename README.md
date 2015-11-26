@@ -1,13 +1,13 @@
 # projet_reseau
 
-## Pour compiler le projet :
-      - make
-## Pour lancer le pong :
-      - make run
-## Pour lancer les tests :
+### Pour compiler le projet :
+      make
+### Pour lancer le pong :
+      make run
+### Pour lancer les tests :
       - make test
       
-##Aborescence du projet :
+### Aborescence du projet :
       - image :
           - ball.png
           - racket.png
