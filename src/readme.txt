@@ -4,9 +4,17 @@ Pour compiler le projet :
 
 Pour lancer le pong :
       make run
+      
+Pour lancer le pong en réseau:
+      make run host port
+      
+Pour lancer le pong en réseau pour le premier joueur:
+      make run port *
+
 
 Pour lancer les tests :
       make test
+      
       
 
 
