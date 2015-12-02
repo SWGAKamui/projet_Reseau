@@ -26,11 +26,19 @@ public class Racket extends PongItem {
 		/* Position par défaut de la raquette en fonction du joueur */
 		switch (this.playerID) {
 			case ONE:
-				setPosition(new Point(0,SIZE_PONG_Y/2));
+				setPosition(new Point(0, SIZE_PONG_Y/2));
 				break;
 			
 		    case TWO:
 		    	setPosition(new Point(SIZE_PONG_X - getWidth(), SIZE_PONG_Y/2));
+		    	break;
+		    
+		    case THREE:
+		    	setPosition(new Point(SIZE_PONG_X/2, 0));
+		    	break;
+		    	
+		    case FOUR:
+		    	setPosition(new Point(SIZE_PONG_X/2, SIZE_PONG_Y));
 		    	break;
 		    	
 		    default:

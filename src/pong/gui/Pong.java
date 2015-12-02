@@ -83,11 +83,11 @@ public class Pong extends JPanel implements KeyListener {
 	private Graphics graphicContext = null;
 
 	/* Instanciation de la partie du premier joueur */
-	public Pong() {
+	public Pong(int localPort) {
 		this.protocolHandler = new ProtocolHandler(this);
 		this.ball = new Ball();
 		this.setPlayers = new HashSet<Player>();	
-		this.network = new Network(this);
+		this.network = new Network(this, localPort);
 		this.localPlayer = new Player(PlayerID.ONE, network.getLocalHost(), network.getLocalPort());
 		this.setPreferredSize(new Dimension(SIZE_PONG_X, SIZE_PONG_Y));
 		this.addKeyListener(this);
@@ -96,11 +96,11 @@ public class Pong extends JPanel implements KeyListener {
 	}
 	
 	/* Instanciation de la partie des autres joueurs */
-	public Pong(String host, int port) {
+	public Pong(int localPort, String host, int port) {
 		this.protocolHandler = new ProtocolHandler(this);
 		this.ball = new Ball();
 		this.setPlayers = new HashSet<Player>();		
-		this.network = new Network(this, host, port);
+		this.network = new Network(this, localPort, host, port);
 		this.setPreferredSize(new Dimension(SIZE_PONG_X, SIZE_PONG_Y));
 		this.addKeyListener(this);
 		
@@ -118,9 +118,15 @@ public class Pong extends JPanel implements KeyListener {
 	public void mainLoop() {
 		calculate();
 		sendNewInfo();
-		String payload = receiveNewInfo();
-		checkNewInfo(payload);
-		updateGame(payload);
+		
+		long t = System.currentTimeMillis();
+		long end = t + 5;
+		while(System.currentTimeMillis() < end) {
+			String payload = receiveNewInfo();
+			checkNewInfo(payload);
+			updateGame(payload);
+		}
+		
 		updateScreen();
 	}
 		
@@ -161,6 +167,10 @@ public class Pong extends JPanel implements KeyListener {
 		}
 	}
 	
+	public void disconnectInitConnexion() {
+		network.disconnectInitConnexion();
+	}
+		
 	public void keyPressed(KeyEvent e) {
 		Racket racket = localPlayer.getRacket();
 		racket.keyPressedRacket(e);

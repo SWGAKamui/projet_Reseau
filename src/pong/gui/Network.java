@@ -26,9 +26,9 @@ public class Network {
 	private int localPort;
 	
 	/* Premier joueur */
-	public Network(Pong pong) {	
+	public Network(Pong pong, int localPort) {
 		this.pong = pong;
-		this.localPort = 7777;
+		this.localPort = localPort;
 		this.setPs = new HashSet<PongClientSocket>();
 		
 		try {
@@ -44,9 +44,9 @@ public class Network {
 	}
 	
 	/* Les autres joueurs */
-	public Network(Pong pong, String host, int port) {
+	public Network(Pong pong, int localPort, String host, int port) {
 		this.pong = pong;
-		this.localPort = 7778;
+		this.localPort = localPort;
 		this.setPs = new HashSet<PongClientSocket>();
 		
 		try {
@@ -157,16 +157,22 @@ public class Network {
 		}			
 	}
 	
-	/**
-	 * On parcourt tous les joueurs, et on se connecte à chacun d'eux.
-	 */
-	public void connectToAll() {
-		/* On ferme le socket qu'on avait initialement ouvert pour récupérer les données */
+	public void disconnectInitConnexion() {
 		Iterator<PongClientSocket> ite = setPs.iterator();
 		while(ite.hasNext()) {
 			PongClientSocket ps = ite.next();
 			ps.disconnect();
+			setPs.remove(ps);
+			System.out.println(setPs.toString());
 		}
+	}
+	
+	/**
+	 * On parcourt tous les joueurs, et on se connecte à chacun d'eux.
+	 */
+	public void connectToAll() {
+		/* On ferme le socket qu'on avait initialement ouvert pour récupérer les données */ 
+		disconnectInitConnexion();
 		
 		/* Puis on se connecte à tous les autres joueurs */
 		Iterator<Player> it = pong.setPlayers.iterator();

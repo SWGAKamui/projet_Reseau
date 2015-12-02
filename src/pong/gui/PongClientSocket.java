@@ -26,13 +26,13 @@ public class PongClientSocket {
 		disableNagleBlocking();
 	}
 	
-	/* Utilisé pour les connexions déjà créées par le serveur */
+	/* Utilisé pour instancier un PongClientSocket à partir d'une connexion déjà créée par le serveur */
 	public PongClientSocket(SocketChannel sc) {
 		this.sc = sc;
 		this.socket = sc.socket();
 		this.host = socket.getInetAddress().getHostAddress();
 		this.port = socket.getPort();
-		this.buf = ByteBuffer.allocateDirect(256);
+		this.buf = ByteBuffer.allocate(256);
 		disableNagleBlocking();
 	}
 	
@@ -40,7 +40,7 @@ public class PongClientSocket {
 		return this.sc;
 	}
 	
-	public void connect() {		
+	public void connect() {	
 		try {
 			this.sc = SocketChannel.open();
 			this.socket = sc.socket();
@@ -72,12 +72,18 @@ public class PongClientSocket {
 	
 	/* Read à modifier, ne lit pas forcement toute la requête */
 	public String readIn() {
-		String payload = null;
-		buf.flip();
+		String payload = new String();
+		ByteBuffer bufReader = ByteBuffer.allocate(1);
 		
 		try {
-			sc.read(buf);
-			payload = convertBufToString();
+			sc.read(bufReader);
+			String c = convertBufToString(bufReader);
+			while(!(c.equals("\n"))) {
+				payload = payload + c;
+				bufReader.clear();
+				sc.read(bufReader);
+				c = convertBufToString(bufReader);
+			}
 		} catch (IOException e) {
 			System.err.println("Cannot read from server " + host);
 			System.exit(1);
@@ -86,8 +92,10 @@ public class PongClientSocket {
 		return payload;
 	}
 		
+	
 	public void writeOut(String payload) {
 		try {
+			payload = payload + "\n";
 			buf.clear();
 			buf.put(payload.getBytes("UTF-8"));
 			buf.flip();
@@ -102,15 +110,15 @@ public class PongClientSocket {
 		}
 	}
 	
-	public String convertBufToString() {
+	public String convertBufToString(ByteBuffer buffer) {
 		String payload = null;
 		
-		buf.flip();
+		buffer.flip();
 		
 		try {
 		Charset charset = Charset.forName( "UTF-8" );
 		CharsetDecoder decoder = charset.newDecoder();
-		payload = decoder.decode(buf).toString();
+		payload = decoder.decode(buffer).toString();
 		} catch (CharacterCodingException e) {
 			System.err.println("Cannot convert from ByteBuffer to String.");
 			System.exit(1);

@@ -7,8 +7,8 @@ import java.util.Iterator;
 
 public class ProtocolHandler {
 	
-	String[] tab;
-	Pong pong;
+	private String[] tab;
+	private Pong pong;
 		
 	public ProtocolHandler(Pong pong) {
 		this.pong = pong;
@@ -52,6 +52,7 @@ public class ProtocolHandler {
 			sb.append("," + getNetworkPlayerInfo(player));
 		}					
 		pong.getNetwork().sendToAll(sb.toString());
+		pong.disconnectInitConnexion();
 	}
 	
 	public void protocolGameInfo() {
@@ -188,7 +189,6 @@ public class ProtocolHandler {
 		/* On récupère les informations de la partie (requête "gameinfo") */
 		String payload = pong.receiveNewInfo();
 		while (payload == null || !(payload.split(",")[0].equals("gameinfo"))) {
-			System.out.println("My payload for init is : " + payload);
 			payload = pong.receiveNewInfo();
 		}
 		
@@ -199,6 +199,7 @@ public class ProtocolHandler {
 	
 	/**
 	 * Used to warn other player that you want to get initial game info (first time)
+	 * Actually sendToAll send it to one player (the one you connected to)
 	 */
 	public void initGameInfo() {
 		pong.getNetwork().sendToAll("init");
