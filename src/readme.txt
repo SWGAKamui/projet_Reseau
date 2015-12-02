@@ -6,10 +6,10 @@ Pour lancer le pong :
       make run
       
 Pour lancer le pong en réseau:
-      make run P1
+      make runP1
       
 Pour lancer le pong en réseau pour le premier joueur:
-      make run P2
+      make runP2
 
 
 Pour lancer les tests :
