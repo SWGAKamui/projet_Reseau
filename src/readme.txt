@@ -5,11 +5,17 @@ Pour compiler le projet :
 Pour lancer le pong :
       make run
       
-Pour lancer le pong en réseau:
+Pour lancer le pong en réseau pour le player 1:
       make runP1
       
-Pour lancer le pong en réseau pour le premier joueur:
+Pour lancer le pong en réseau pour le player 2:
       make runP2
+      
+Pour lancer le pong en réseau pour le player 3:
+      make runP3
+
+Pour lancer le pong en réseau pour le player 4:
+      make runP4
 
 
 Pour lancer les tests :
