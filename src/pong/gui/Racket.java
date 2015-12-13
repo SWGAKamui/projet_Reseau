@@ -8,7 +8,7 @@ public class Racket extends PongItem {
 	/**
 	 * Path of the racket img
 	 */
-	public static final String PATH_RACKET = "image/racket.png";
+	public static final String PATH_RACKET = "image/sabre_vert.png";
 	
 	/**
 	 * Speed of racket (in pixels per second)

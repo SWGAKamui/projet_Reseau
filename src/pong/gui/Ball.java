@@ -9,7 +9,7 @@ public class Ball extends PongItem {
 	/**
 	 * Path of the ball img
 	 */
-	public static final String PATH_BALL = "image/ball.png";
+	public static final String PATH_BALL = "image/death_star.png";
 	
 	/**
 	 * Speed of ball (in pixels per second)

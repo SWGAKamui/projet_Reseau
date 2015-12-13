@@ -4,9 +4,11 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 
 import java.util.HashSet;
@@ -214,8 +216,10 @@ public class Pong extends JPanel implements KeyListener {
 		}
 		
 		/* Fill the area with blue */
-		graphicContext.setColor(backgroundColor);
+		//graphicContext.setColor(backgroundColor);
+		Image background = Toolkit.getDefaultToolkit().createImage(ClassLoader.getSystemResource("image/background.png"));
 		graphicContext.fillRect(0, 0, SIZE_PONG_X, SIZE_PONG_Y);
+		graphicContext.drawImage(background, 0, 0, null);
 
 		/* Draw items */
 		graphicContext.drawImage(ball.getImg(), ball.getPosition().x, ball.getPosition().y, ball.getWidth(), ball.getHeight(), null);
