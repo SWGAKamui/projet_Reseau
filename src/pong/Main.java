@@ -1,8 +1,8 @@
 package pong;
 
 import pong.gui.Window;
+import pong.gui.Comment;
 import pong.gui.Menu;
-import pong.gui.PlayerID;
 import pong.gui.Pong;
 
 /**
@@ -12,18 +12,40 @@ public class Main  {
 	
 	/* javac Main host port */
 	public static void main(String[] args) {
-		boolean pressed = false;
+		boolean pressedMain = false;
+		boolean pressedComment = false;
+		boolean pressedMenu = false;
+		Comment comment = new Comment();;
 		Pong pong = new Pong();
 		
 		Window window = new Window(pong);
 		Menu menu = new Menu();
+		menu.print();
 		
 		while(true){
-			if(pressed){	
+			pressedMenu = comment.getPressed();
+			pressedMain = menu.getPressedPlay();
+			pressedComment = menu.getPressedHow();
+			if(pressedMain){	
+				pressedMain = false;
+				menu.setPressedHow(false);
+				menu.setPressedPlay(false);
 				menu.dispose();
-				window.displayOnscreen();			
+				window.displayOnscreen();	
 			}
-			pressed = menu.getPressed();
+			if(pressedComment){	
+				pressedComment = false;
+				menu.setPressedHow(false);
+				menu.dispose();
+				comment.print();		
+			}
+			if(pressedMenu){
+				pressedMenu = false;
+				comment.setPressed(false);
+				comment.dispose();
+				menu.print();		
+			}
+			
 		}
 	}
 }

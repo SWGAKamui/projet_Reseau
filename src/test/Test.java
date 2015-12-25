@@ -26,7 +26,6 @@ public class Test {
 		int SIZE_PONG_X = 800;
 		Ball ball = new Ball();
 		Racket racket = new Racket (PlayerID.ONE);
-		Racket racket2 = new Racket (PlayerID.TWO);
 		int pos = 5;
 		
 		 
