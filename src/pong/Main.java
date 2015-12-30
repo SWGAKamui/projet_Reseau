@@ -1,9 +1,11 @@
 package pong;
 
 import pong.gui.Window;
+import son.Son;
 import pong.gui.Comment;
 import pong.gui.Menu;
 import pong.gui.Pong;
+
 
 /**
  * Starting point of the Pong application
@@ -22,6 +24,9 @@ public class Main  {
 		Menu menu = new Menu();
 		menu.print();
 		
+
+		Son audio = new Son("D:/mesDocuments/GitHub/projet_reseau/src/son/Transistor.wav");
+		audio.play();
 		while(true){
 			pressedMenu = comment.getPressed();
 			pressedMain = menu.getPressedPlay();
@@ -31,7 +36,9 @@ public class Main  {
 				menu.setPressedHow(false);
 				menu.setPressedPlay(false);
 				menu.dispose();
+				audio.stop();
 				window.displayOnscreen();	
+				
 			}
 			if(pressedComment){	
 				pressedComment = false;
