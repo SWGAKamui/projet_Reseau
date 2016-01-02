@@ -25,7 +25,7 @@ public class Main  {
 		menu.print();
 		
 
-		Son audio = new Son("D:/mesDocuments/GitHub/projet_reseau/src/son/Transistor.wav");
+		Son audio = new Son("src/son/Transistor.wav");
 		audio.play();
 		while(true){
 			pressedMenu = comment.getPressed();
