@@ -24,11 +24,17 @@ public class Main  {
 		Window window = new Window(pong);
 		Menu menu = new Menu();
 		menu.print();
-		
+
 		
 		Son audio = new Son("src/son/Transistor.wav");
 		audio.play();
+		
 		while(true){
+			try {
+				Thread.sleep(1);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 			pressedMenu = comment.getPressed();
 			pressedMain = menu.getPressedPlay();
 			pressedComment = menu.getPressedHow();
@@ -38,11 +44,8 @@ public class Main  {
 				menu.setPressedPlay(false);
 				menu.dispose();
 				audio.stop();
-				window.displayOnscreen();
-				
-				
+				window.displayOnscreen();	
 			}
-
 			if(pressedComment){	
 				pressedComment = false;
 				menu.setPressedHow(false);
@@ -56,7 +59,7 @@ public class Main  {
 				comment.dispose();
 				menu.print();		
 			}
-			System.out.println("OK!");
+
 			
 		}
 

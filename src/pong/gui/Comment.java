@@ -31,7 +31,6 @@ public class Comment extends JFrame implements MouseListener{
 		    @Override
 		    public void actionPerformed(ActionEvent ae) {
 		    	pressed = true;
-		    	System.out.println("OK! Comment");
 		    }
 		});
 		pan.setLayout(new GridLayout(4,1));
