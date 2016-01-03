@@ -27,7 +27,7 @@ public class Victoire extends JFrame{
 	public Victoire(Player player){
 		try {
             // Load the background image
-            BufferedImage img = ImageIO.read(new File("src/image/red-panda.jpg"));            
+            BufferedImage img = ImageIO.read(new File("image/red-panda.jpg"));            
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
             // Set the frames content pane to use a JLabel
