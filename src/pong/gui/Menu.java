@@ -23,8 +23,8 @@ public class Menu extends JFrame implements MouseListener{
 	private JButton boutonHow = new JButton("Comment jouer ?");
 	private JLabel strPong = new JLabel("Pong Reseau");
 	private JLabel strautor = new JLabel("Kinda AL CHAHID - Thibault PARPAITE");
-	public boolean pressedPlay = false;
-	public boolean pressedHow = false;
+	private boolean pressedPlay = false;
+	private boolean pressedHow = false;
 	
 	public Menu(){
 		
@@ -35,14 +35,14 @@ public class Menu extends JFrame implements MouseListener{
 		bouton.addActionListener(new ActionListener() {
 		    @Override
 		    public void actionPerformed(ActionEvent ae) {
-		    	setPressedPlay(true);
+		    	pressedPlay = true;
 		    }
 		});
 		
 		boutonHow.addActionListener(new ActionListener() {
 		    @Override
 		    public void actionPerformed(ActionEvent ae) {
-		    	setPressedHow(true);
+		    	pressedHow = true;
 		    }
 		});
 		

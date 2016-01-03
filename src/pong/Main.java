@@ -32,18 +32,21 @@ public class Main  {
 			pressedMenu = comment.getPressed();
 			pressedMain = menu.getPressedPlay();
 			pressedComment = menu.getPressedHow();
-			if(pressedMain){	
+			if(pressedMain){				
 				pressedMain = false;
 				menu.setPressedHow(false);
 				menu.setPressedPlay(false);
 				menu.dispose();
 				audio.stop();
-				window.displayOnscreen();	
+				window.displayOnscreen();
+				
 				
 			}
+
 			if(pressedComment){	
 				pressedComment = false;
 				menu.setPressedHow(false);
+				
 				menu.dispose();
 				comment.print();		
 			}
@@ -53,6 +56,7 @@ public class Main  {
 				comment.dispose();
 				menu.print();		
 			}
+			System.out.println("OK!");
 			
 		}
 

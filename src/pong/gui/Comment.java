@@ -17,9 +17,9 @@ public class Comment extends JFrame implements MouseListener{
 	private JPanel pan = new JPanel();
 	private JButton boutonMenu = new JButton("Menu");
 	private JLabel strcomment1 = new JLabel("Principe du Pong classique");
-	private JLabel strcomment2 = new JLabel("Utiliser les flèches du clavier pour ce déplacer vers le haut ou vers le bas");
+	private JLabel strcomment2 = new JLabel("Utiliser les fleches du clavier pour ce deplacer vers le haut ou vers le bas");
 	
-	public boolean pressed = false;
+	private boolean pressed = false;
 	
 	public Comment(){
 		
@@ -30,7 +30,8 @@ public class Comment extends JFrame implements MouseListener{
 		boutonMenu.addActionListener(new ActionListener() {
 		    @Override
 		    public void actionPerformed(ActionEvent ae) {
-		    	setPressed();
+		    	pressed = true;
+		    	System.out.println("OK! Comment");
 		    }
 		});
 		pan.setLayout(new GridLayout(4,1));
@@ -46,10 +47,7 @@ public class Comment extends JFrame implements MouseListener{
 		this.setContentPane(pan);
 	   	this.setVisible(true);
 	}
-		
-	public void setPressed(){
-		pressed = true;
-	}
+
 	public void setPressed(boolean b){
 		pressed = b;
 	}
