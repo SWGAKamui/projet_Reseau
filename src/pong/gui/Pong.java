@@ -9,7 +9,10 @@ import java.awt.Toolkit;
 import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.File;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
@@ -75,8 +78,11 @@ public class Pong extends JPanel implements KeyListener {
 	 */
 	private Graphics graphicContext = null;
 	
+	private Image background = Background();
 	private Player player1;
 	private Player player2;
+	private Player player3;
+	private Player player4;
 	
 	public Pong() {
 
@@ -84,6 +90,8 @@ public class Pong extends JPanel implements KeyListener {
 		
 		this.player1 = new Player(PlayerID.ONE);
 		this.player2 = new Player(PlayerID.TWO);
+		this.player3 = new Player(PlayerID.THREE);
+		this.player4 = new Player(PlayerID.FOUR);
 		this.setPlayers = new HashSet<Player>();
 		setPlayers.add(player1);
 		setPlayers.add(player2);
@@ -92,7 +100,9 @@ public class Pong extends JPanel implements KeyListener {
 		this.addKeyListener(this);
 	}
 	
-
+	public int getNbPlayers(){
+		return 4;
+	}
 	/**
      * Proceeds to the movement of the rackets, the ball and updates the screen
 	 */
@@ -130,6 +140,7 @@ public class Pong extends JPanel implements KeyListener {
 			player.setRacket(racket);
 		}
 	}
+	
 	public void keyTyped(KeyEvent e) { }
 
 	/*
@@ -146,7 +157,15 @@ public class Pong extends JPanel implements KeyListener {
 	public void paint(Graphics g) {
 		g.drawImage(buffer, 0, 0, this);
 	}
-
+	
+	public Image Background(){
+		try {
+			return ImageIO.read(new File("src/image/background.png"));
+		} catch (IOException exp) {
+	        exp.printStackTrace();
+	    }
+		return background;
+	}
 	/**
 	 * Draw each Pong item based on new positions
 	 */
@@ -166,12 +185,9 @@ public class Pong extends JPanel implements KeyListener {
 		graphicContext.fillRect(0, 0, SIZE_PONG_X, SIZE_PONG_Y);
 		graphicContext.setColor(fontColor);
 		graphicContext.setFont(f);
-
+		graphicContext.drawImage(background, 0, 0, SIZE_PONG_X, SIZE_PONG_Y, null);
 		/* Draw items */
-	
-		graphicContext.drawString(Integer.toString(player1.getScore()),SIZE_PONG_X/3,50);
-		graphicContext.drawString(Integer.toString(player2.getScore()),2*(SIZE_PONG_X)/3,50);
-		graphicContext.drawString("Score", (SIZE_PONG_X/2)-4*("Score".length()), 50);
+		displayScore();
 		graphicContext.drawImage(ball.getImg(), ball.getPosition().x, ball.getPosition().y, ball.getWidth(), ball.getHeight(), null);
 		
 		
@@ -184,6 +200,26 @@ public class Pong extends JPanel implements KeyListener {
 		
 		this.repaint();
 	}
+	public void displayScore(){
+		if(getNbPlayers() == 2){
+			graphicContext.drawString("P1 : "+Integer.toString(player1.getScore()),SIZE_PONG_X/3,SIZE_PONG_Y/2 - 15);
+			graphicContext.drawString("P2 : "+Integer.toString(player2.getScore()),2*(SIZE_PONG_X)/3,SIZE_PONG_Y/2 - 15);
+			graphicContext.drawString("Score", (SIZE_PONG_X/2)-4*("Score".length()), SIZE_PONG_Y/2 - 15);
+		}
+		if(getNbPlayers() == 3){
+			graphicContext.drawString("P1 : "+Integer.toString(player1.getScore()),SIZE_PONG_X/3,SIZE_PONG_Y/2 - 15);
+			graphicContext.drawString("P2 : "+Integer.toString(player2.getScore()),2*(SIZE_PONG_X)/3,SIZE_PONG_Y/2 - 15);
+			graphicContext.drawString("P3 : "+Integer.toString(player3.getScore()),(SIZE_PONG_X)/2 -(SIZE_PONG_X)/50 - 4, SIZE_PONG_Y/2 + 15);
+			graphicContext.drawString("Score", (SIZE_PONG_X/2)-4*("Score".length()), SIZE_PONG_Y/2 - 15);
+		}
+		if(getNbPlayers() == 4){
+			graphicContext.drawString("P1 : "+Integer.toString(player1.getScore()),SIZE_PONG_X/3,SIZE_PONG_Y/2 - 15);
+			graphicContext.drawString("P2 : "+Integer.toString(player2.getScore()),2*(SIZE_PONG_X)/3, SIZE_PONG_Y/2 - 15);
+			graphicContext.drawString("P3 : "+Integer.toString(player3.getScore()),SIZE_PONG_X/3, SIZE_PONG_Y/2 + 15);
+			graphicContext.drawString("P4 : "+Integer.toString(player4.getScore()),2*(SIZE_PONG_X)/3, SIZE_PONG_Y/2 + 15);
+			graphicContext.drawString("Score", (SIZE_PONG_X/2)-4*("Score".length()), SIZE_PONG_Y/2);
+		}
+	}
 	
 	public boolean checkVictory() {
 		Iterator<Player> it = setPlayers.iterator();
@@ -192,7 +228,9 @@ public class Pong extends JPanel implements KeyListener {
 			Player player = it.next();
 
 			if (player.score == SCORE_TO_WIN) {
-				JOptionPane.showMessageDialog(null, "Player" + player.playerID.toString() + "wins", "Pong", JOptionPane.PLAIN_MESSAGE);
+				//JOptionPane.showMessageDialog(null, "Player" + player.playerID.toString() + "wins", "Pong", JOptionPane.PLAIN_MESSAGE);
+				Victoire vic = new Victoire(player);
+				vic.print();
 				return true;
 			}
 		}

@@ -7,6 +7,7 @@ import pong.gui.Menu;
 import pong.gui.Pong;
 
 
+
 /**
  * Starting point of the Pong application
  */
@@ -19,12 +20,12 @@ public class Main  {
 		boolean pressedMenu = false;
 		Comment comment = new Comment();;
 		Pong pong = new Pong();
-		
+
 		Window window = new Window(pong);
 		Menu menu = new Menu();
 		menu.print();
 		
-
+		
 		Son audio = new Son("src/son/Transistor.wav");
 		audio.play();
 		while(true){
@@ -54,5 +55,6 @@ public class Main  {
 			}
 			
 		}
+
 	}
 }
