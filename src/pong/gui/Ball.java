@@ -68,12 +68,12 @@ public class Ball extends PongItem {
 		
 		if (getPositionX() > SIZE_PONG_X - getWidth()) {
 			updateScore(setPlayers, PlayerID.TWO);
-			setPositionX(getPositionX() - getWidth()/2);
+			setPositionX(getPositionX());
 			this.speed.x = -this.speed.x;
 		}
 		
 		if (getPositionY() > SIZE_PONG_Y - getHeight()) {
-			setPositionY(getPositionY() - getHeight()/2);
+			setPositionY(getPositionY());
 			this.speed.y = -this.speed.y;
 		}
 	}
@@ -120,7 +120,17 @@ public class Ball extends PongItem {
 				setPositionX(racket.getPositionX() - getWidth());
 				this.speed.x = -this.speed.x;
 				break;
-			
+				
+			case THREE:
+				setPositionY(racket.getPositionY() + racket.getHeight());
+				this.speed.y = -this.speed.y;
+				break;
+				
+			case FOUR:
+				setPositionY(racket.getPositionY() - getHeight());
+				this.speed.y = -this.speed.y;
+				break;
+				
 			default:
 				break;
 		}

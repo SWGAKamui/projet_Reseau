@@ -8,7 +8,7 @@ runP2: all
 	java pong.Main 7778 0:0:0:0:0:0:0:0 7777
 
 runP3: all
-	java pong.Main 7779 0:0:0:0:0:0:0:0 7778
+	java pong.Main 7779 0:0:0:0:0:0:0:0 7777
 
 runP4: all
 	java pong.Main 7780 0:0:0:0:0:0:0:0 7777

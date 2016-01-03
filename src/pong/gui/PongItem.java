@@ -43,8 +43,7 @@ public abstract class PongItem implements Cloneable {
 	private Point position;
 		
 	public PongItem(String path) {
-		this.img = Toolkit.getDefaultToolkit().createImage(
-				ClassLoader.getSystemResource(path));
+		this.img = Toolkit.getDefaultToolkit().createImage(ClassLoader.getSystemResource(path));
 		this.icon = new ImageIcon(img);		
 		this.width = icon.getIconWidth();
 		this.height = icon.getIconHeight();
@@ -104,6 +103,13 @@ public abstract class PongItem implements Cloneable {
 	
 	public void setPositionY(int y) {
 		this.position.y = y;
+	}
+	
+	public void setPath(String path) {
+		this.img = Toolkit.getDefaultToolkit().createImage(ClassLoader.getSystemResource(path));
+		this.icon = new ImageIcon(img);		
+		this.width = icon.getIconWidth();
+		this.height = icon.getIconHeight();
 	}
 	
 	public Rectangle getHitBox() {
