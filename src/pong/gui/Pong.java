@@ -78,7 +78,7 @@ public class Pong extends JPanel implements KeyListener {
 	 */
 	private Graphics graphicContext = null;
 	
-	private Image background = background();
+	private Image background = null;
 	private Player player1;
 	private Player player2;
 	private Player player3;
@@ -158,13 +158,12 @@ public class Pong extends JPanel implements KeyListener {
 		g.drawImage(buffer, 0, 0, this);
 	}
 	
-	public Image background(){
+	public void background(){
 		try {
-		    return ImageIO.read(new File("image/background.png"));
+		    background = ImageIO.read(new File("image/background.png"));
 		} catch (IOException exp) {
 	        exp.printStackTrace();
 	    }
-		return background;
 	}
     
 	/**
