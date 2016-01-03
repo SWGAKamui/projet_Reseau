@@ -26,13 +26,8 @@ public class Victoire extends JFrame{
 	
 	public Victoire(Player player){
 		try {
-            // Load the background image
             BufferedImage img = ImageIO.read(new File("image/red-panda.jpg"));            
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-            // Set the frames content pane to use a JLabel
-            // whose icon property has been set to use the image
-            // we just loaded                        
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);                    
             frame.setContentPane(new JLabel(new ImageIcon(img)));
             frame.setLayout(new GridBagLayout());
             GridBagConstraints gbc = new GridBagConstraints();
