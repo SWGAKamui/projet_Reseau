@@ -40,6 +40,14 @@ public class PongClientSocket {
 		return this.sc;
 	}
 	
+	public String getHost() {
+		return this.host;
+	}
+	
+	public int getPort() {
+		return this.port;
+	}
+	
 	public void connect() {	
 		try {
 			this.sc = SocketChannel.open();

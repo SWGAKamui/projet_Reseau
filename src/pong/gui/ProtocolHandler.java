@@ -52,7 +52,6 @@ public class ProtocolHandler {
 			sb.append("," + getNetworkPlayerInfo(player));
 		}					
 		pong.getNetwork().sendToAll(sb.toString());
-		pong.disconnectInitConnexion();
 	}
 	
 	public void protocolGameInfo() {

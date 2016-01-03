@@ -21,6 +21,7 @@ public class Network {
 	private PongServerSocket pss; // Serveur créé 
 	protected Set<PongClientSocket> setPs; // Ensemble contenant les sockets de connexion vers les autres serveurs
 	private Selector selector;
+	private PongClientSocket initConnexion;
 	
 	private String localHost;
 	private int localPort;
@@ -63,7 +64,8 @@ public class Network {
 		/* On se connecte au joueur donné pour récupérer les informations sur la partie */
 		PongClientSocket ps = new PongClientSocket(host, port);
 		bindSocketChannel(ps.getSocketChannel());
-		setPs.add(ps);
+		this.setPs.add(ps);
+		this.initConnexion = ps;
 	}
 	
 	
@@ -161,8 +163,8 @@ public class Network {
 		Iterator<PongClientSocket> ite = setPs.iterator();
 		while(ite.hasNext()) {
 			PongClientSocket ps = ite.next();
-			ps.disconnect();
-			setPs.remove(ps);
+			ps.disconnect();	
+			setPs.remove(ps);	
 			System.out.println(setPs.toString());
 		}
 	}
@@ -172,9 +174,13 @@ public class Network {
 	 */
 	public void connectToAll() {
 		/* On ferme le socket qu'on avait initialement ouvert pour récupérer les données */ 
-		disconnectInitConnexion();
+		//disconnectInitConnexion();
 		
-		/* Puis on se connecte à tous les autres joueurs */
+		/* On se connecte à tous les autres joueurs sauf celui auquel on s'était initialement connecté pour récupérer les données */
+		String initHost = initConnexion.getHost();
+		int initPort = initConnexion.getPort();
+		PongClientSocket ps;
+		
 		Iterator<Player> it = pong.setPlayers.iterator();
 		while(it.hasNext()) {
 			Player player = it.next();
@@ -182,9 +188,14 @@ public class Network {
 			String host = player.getHost();
 			int port = player.getPort();
 			
-			PongClientSocket ps = new PongClientSocket(host, port);
-			bindSocketChannel(ps.getSocketChannel());
-			setPs.add(ps);
+			if ((host != initHost) && (port != initPort)) {
+				ps = new PongClientSocket(host, port);
+				bindSocketChannel(ps.getSocketChannel());
+				setPs.add(ps);
+			}
+			else {
+				ps = initConnexion;
+			}
 			
 			/* On envoie les informations du nouveau joueur à chaque joueur auquel on se connecte */
 			ps.writeOut(pong.getLocalPlayerProtocol());
