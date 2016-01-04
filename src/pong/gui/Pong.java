@@ -8,7 +8,6 @@ import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 
 import java.util.HashSet;
@@ -125,7 +124,6 @@ public class Pong extends JPanel implements KeyListener {
 		long end = t + 5;
 		while(System.currentTimeMillis() < end) {
 			String payload = receiveNewInfo();
-			checkNewInfo(payload);
 			updateGame(payload);
 		}
 		
@@ -136,12 +134,11 @@ public class Pong extends JPanel implements KeyListener {
      * Proceeds to the movement of the racket of the local player and the ball (only if it is in control area of local player)
 	 */
 	public void calculate() {
-		
 		Racket racket = localPlayer.getRacket();
 		racket.animateRacket();
 		localPlayer.setRacket(racket);
-		
-		if (localPlayer.getPlayerID() == PlayerID.ONE) {
+
+		if (this.localPlayer.getPlayerID() == PlayerID.ONE) {
 			ball.animateBall(setPlayers);
 		}
 	}
@@ -153,11 +150,7 @@ public class Pong extends JPanel implements KeyListener {
 	public String receiveNewInfo() {
 		return network.receiveNewInfo();
 	}
-	
-	public void checkNewInfo(String payload) {
-		// On vérifie la légitimité des données reçues
-	}
-	
+		
 	/**
 	 * On traite la requête reçue à l'aide de la classe ProtocolHandler
 	 */
@@ -168,11 +161,7 @@ public class Pong extends JPanel implements KeyListener {
 			protocolHandler.run();
 		}
 	}
-	
-	public void disconnectInitConnexion() {
-		network.disconnectInitConnexion();
-	}
-		
+			
 	public void keyPressed(KeyEvent e) {
 		Racket racket = localPlayer.getRacket();
 		racket.keyPressedRacket(e);
@@ -277,12 +266,10 @@ public class Pong extends JPanel implements KeyListener {
 		this.ball = (Ball) ball.clone();
 	}
 	
-	/* Pas d'encapsulation volontairement A FAIRE */
 	public Network getNetwork() {
 		return this.network;
 	}
 	
-	/* Encapsulation à faire */
 	public Player getLocalPlayer() {
 		return this.localPlayer;
 	}

@@ -36,6 +36,14 @@ public class Ball extends PongItem {
 		return (Point) this.speed.clone();
 	}
 	
+	public int getSpeedX() {
+		return this.speed.x;
+	}
+	
+	public int getSpeedY() {
+		return this.speed.y;
+	}
+	
 	public void setSpeed(Point speed) {
 		this.speed = (Point) speed.clone();
 	}

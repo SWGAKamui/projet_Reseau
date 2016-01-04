@@ -3,6 +3,8 @@ package pong.gui;
 import java.awt.Point;
 import java.util.Iterator;
 
+import javax.swing.JOptionPane;
+
 /* Code à factoriser */
 
 public class ProtocolHandler {
@@ -99,7 +101,21 @@ public class ProtocolHandler {
 		/* On met à jour la position de la balle */
 		int positionBallX = Integer.parseInt(tab[1]);
 		int positionBallY = Integer.parseInt(tab[2]);
+				
 		Ball ball = pong.getBall();
+		System.out.println("Position de la balle en X " + ball.getPositionX());
+		System.out.println("positionBallX : " + positionBallX);
+		System.out.println("ball.geTPos+speed : " + (ball.getPositionX() + ball.getSpeedX()));
+		
+		
+		/* Anti-cheat */
+		if ((positionBallX > (ball.getPositionX() + ball.getSpeedX()) && ball.getSpeedX() > 0) || 
+			(positionBallX < (ball.getPositionX() + ball.getSpeedX()) && ball.getSpeedX() < 0) ||
+			(positionBallY > (ball.getPositionY() + ball.getSpeedY()) && ball.getSpeedY() > 0) || 
+			(positionBallY < (ball.getPositionY() + ball.getSpeedY()) && ball.getSpeedY() < 0)) {
+			errorCheat("Balle avec coordonnées invalides (cheat)");
+		}
+		
 		ball.setPosition(new Point(positionBallX, positionBallY));
 		pong.setBall(ball);
 		
@@ -131,6 +147,15 @@ public class ProtocolHandler {
 			Player player = it.next();
 			if (player.getPlayerID() == playerID) {
 				Racket racket = player.getRacket();
+				
+				/* Anti-cheat */
+				if ((positionRacketX > (racket.getPositionX() + racket.getSpeed()) && racket.getSpeed() > 0) || 
+					(positionRacketX < (racket.getPositionX() + racket.getSpeed()) && racket.getSpeed() < 0) ||
+					(positionRacketY > (racket.getPositionY() + racket.getSpeed()) && racket.getSpeed() > 0) || 
+					(positionRacketY < (racket.getPositionY() + racket.getSpeed()) && racket.getSpeed() < 0)) {
+						errorCheat("Raquette avec coordonnées invalides (cheat)");
+					}
+				
 				racket.setPosition(new Point(positionRacketX, positionRacketY));
 				player.setRacket(racket);
 			}
@@ -209,6 +234,10 @@ public class ProtocolHandler {
 	 */
 	public String getLocalPlayerProtocol() {
 		return ("newplayer" + "," + getNetworkPlayerInfo(pong.getLocalPlayer()));
+	}
+
+	public void errorCheat(String message) {
+		JOptionPane.showMessageDialog(null, "Tentative de triche : " + message, "Pong", JOptionPane.PLAIN_MESSAGE);
 	}
 }
 			
