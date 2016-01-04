@@ -32,7 +32,7 @@ public class Main  {
 		menu.print();
 
 		
-		Son audio = new Son("sound/main_theme.mp3");
+		Son audio = new Son("sound/main_theme.wav");
 		audio.play();
 		
 		while(true){

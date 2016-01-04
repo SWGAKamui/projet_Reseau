@@ -103,7 +103,7 @@ public class Pong extends JPanel implements KeyListener {
 		this.ball = new Ball();
 		this.setPlayers = new HashSet<Player>();	
 		this.network = new Network(this, localPort);
-		this.audio = new Son("sound/duel_of_the_fates.mp3");
+		this.audio = new Son("sound/duel_of_the_fates.wav");
 		audio.play();
 		this.localPlayer = new Player(PlayerID.ONE, network.getLocalHost(), network.getLocalPort());
 		this.setPreferredSize(new Dimension(SIZE_PONG_X, SIZE_PONG_Y));
@@ -118,7 +118,7 @@ public class Pong extends JPanel implements KeyListener {
 		this.ball = new Ball();
 		this.setPlayers = new HashSet<Player>();		
 		this.network = new Network(this, localPort, host, port);
-		this.audio = new Son("sound/duel_of_the_fates.mp3");
+		this.audio = new Son("sound/duel_of_the_fates.wav");
 		audio.play();
 		this.setPreferredSize(new Dimension(SIZE_PONG_X, SIZE_PONG_Y));
 		this.addKeyListener(this);
