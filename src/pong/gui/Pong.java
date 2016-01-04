@@ -1,13 +1,18 @@
 package pong.gui;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.File;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 import java.util.HashSet;
@@ -15,6 +20,8 @@ import java.util.Iterator;
 import java.util.Set;
 
 import javax.swing.JPanel;
+
+import sound.Son;
 
 /**
  * An Pong is a Java graphical container that extends the JPanel class in
@@ -28,12 +35,14 @@ public class Pong extends JPanel implements KeyListener {
 	 * Constant (c.f. final) common to all Pong instances (c.f. static)
 	 * defining the background color of the Pong
 	 */
-    private static final Color backgroundColor = new Color(0xC, 0x2D, 0x4E);
+	private static final Color backgroundColor = new Color(0x00, 0x00, 0x00);
+	private static final Color fontColor = new Color(0xFF, 0xFF, 0xFF);
+    
 
 	/**
 	 * Score à obtenir pour remporter la partie
 	 */
-	private static final int SCORE_TO_WIN = 10;
+	private static final int SCORE_TO_WIN = 5;
 	
 	/**
 	 * Width of pong area
@@ -53,6 +62,7 @@ public class Pong extends JPanel implements KeyListener {
 	 */
 	private Ball ball;
 	
+
 	/**
 	 * Joueur local
 	 */
@@ -62,6 +72,8 @@ public class Pong extends JPanel implements KeyListener {
 	 * Gestion du réseau
 	 */
 	private Network network;
+	
+	private Son audio;
 	
 	/**
 	 * Ensemble contenant les joueurs. 
@@ -83,12 +95,16 @@ public class Pong extends JPanel implements KeyListener {
 	 */
 	private Graphics graphicContext = null;
 
+        private Image background = background();
+    
 	/* Instanciation de la partie du premier joueur */
 	public Pong(int localPort) {
 		this.protocolHandler = new ProtocolHandler(this);
 		this.ball = new Ball();
 		this.setPlayers = new HashSet<Player>();	
 		this.network = new Network(this, localPort);
+		this.audio = new Son("sound/duel_of_the_fates.mp3");
+		audio.play();
 		this.localPlayer = new Player(PlayerID.ONE, network.getLocalHost(), network.getLocalPort());
 		this.setPreferredSize(new Dimension(SIZE_PONG_X, SIZE_PONG_Y));
 		this.addKeyListener(this);
@@ -102,6 +118,8 @@ public class Pong extends JPanel implements KeyListener {
 		this.ball = new Ball();
 		this.setPlayers = new HashSet<Player>();		
 		this.network = new Network(this, localPort, host, port);
+		this.audio = new Son("sound/duel_of_the_fates.mp3");
+		audio.play();
 		this.setPreferredSize(new Dimension(SIZE_PONG_X, SIZE_PONG_Y));
 		this.addKeyListener(this);
 		
@@ -131,7 +149,7 @@ public class Pong extends JPanel implements KeyListener {
 	}
 		
 	/**
-     * Proceeds to the movement of the racket of the local player and the ball (only if it is in control area of local player)
+	 * Proceeds to the movement of the racket of the local player and the ball (only if it is in control area of local player)
 	 */
 	public void calculate() {
 		Racket racket = localPlayer.getRacket();
@@ -190,11 +208,21 @@ public class Pong extends JPanel implements KeyListener {
 	public void paint(Graphics g) {
 		g.drawImage(buffer, 0, 0, this);
 	}
-
+	
+	public Image background(){
+		try {
+		    return ImageIO.read(new File("image/background.png"));
+		} catch (IOException exp) {
+	        exp.printStackTrace();
+	    }
+		return background;
+	}
+    
 	/**
 	 * Draw each Pong item based on new positions
 	 */
 	public void updateScreen() {
+		Font f = new Font("Dialog", Font.PLAIN, 20);
 		if (buffer == null) {
 			/* First time we get called with all windows initialized */
 			buffer = createImage(SIZE_PONG_X, SIZE_PONG_Y);
@@ -206,12 +234,14 @@ public class Pong extends JPanel implements KeyListener {
 		
 		/* Fill the area with blue */
 		//graphicContext.setColor(backgroundColor);
-		Image background = Toolkit.getDefaultToolkit().createImage(ClassLoader.getSystemResource("image/background.png"));
 		graphicContext.fillRect(0, 0, SIZE_PONG_X, SIZE_PONG_Y);
-		graphicContext.drawImage(background, 0, 0, null);
-
+		graphicContext.setColor(fontColor);
+		graphicContext.setFont(f);
+		graphicContext.drawImage(background, 0, 0, SIZE_PONG_X, SIZE_PONG_Y, null);
 		/* Draw items */
+		displayScore();
 		graphicContext.drawImage(ball.getImg(), ball.getPosition().x, ball.getPosition().y, ball.getWidth(), ball.getHeight(), null);
+		
 		
 		Iterator<Player> it = setPlayers.iterator();
 		while(it.hasNext()) {
@@ -223,25 +253,58 @@ public class Pong extends JPanel implements KeyListener {
 		this.repaint();
 	}
 	
+	public void displayScore() {
+		Iterator<Player> it = setPlayers.iterator();
+
+		while(it.hasNext()) {
+			Player player = it.next();
+			switch (player.getPlayerID()) {
+				case ONE:
+					graphicContext.drawString("P1 : " + Integer.toString(player.getScore()), SIZE_PONG_X/3, SIZE_PONG_Y/2 - 15);
+					break;
+				case TWO:
+					graphicContext.drawString("P2 : " + Integer.toString(player.getScore()), 2*(SIZE_PONG_X)/3, SIZE_PONG_Y/2 - 15);
+					break;
+				case THREE:
+					graphicContext.drawString("P2 : " + Integer.toString(player.getScore()), SIZE_PONG_X/3, SIZE_PONG_Y/2 + 15);
+					break;
+				case FOUR:
+					graphicContext.drawString("P2 : " + Integer.toString(player.getScore()), 2*(SIZE_PONG_X)/3, SIZE_PONG_Y/2 + 15);
+					break;
+				default:
+					break;
+			}
+		}
+		graphicContext.drawString("Score", (SIZE_PONG_X/2)-4*("Score".length()), SIZE_PONG_Y/2);
+	}
+    
 	public boolean checkVictory() {
 		Iterator<Player> it = setPlayers.iterator();
+
 		while(it.hasNext()) {
 			Player player = it.next();
 			if (player.getScore() == SCORE_TO_WIN) {
-				JOptionPane.showMessageDialog(null, "Player" + player.getPlayerID() + "wins", "Pong", JOptionPane.PLAIN_MESSAGE);
-				return true;
+			    Victoire vic = new Victoire(player);
+			    vic.print();
+			    audio.stop();
+			    return true;
 			}
 		}
 		return false;	
 	}
-	
-	public PlayerID selectPlayerID() {
-		int cpt = 0;
+
+    	public int getNbPlayers(){
+	        int cpt = 0;
 		Iterator<Player> it = setPlayers.iterator();
 		while(it.hasNext()) {
 			Player player = it.next();
 			cpt++;
 		}
+		return cpt;
+	}
+    
+	public PlayerID selectPlayerID() {
+	        int cpt = getNbPlayers();
 		switch (cpt) {
 			case 0:
 				return PlayerID.ONE;
