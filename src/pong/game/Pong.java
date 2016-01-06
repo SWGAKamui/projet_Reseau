@@ -265,10 +265,10 @@ public class Pong extends JPanel implements KeyListener {
 					graphicContext.drawString("P2 : " + Integer.toString(player.getScore()), 2*(SIZE_PONG_X)/3, SIZE_PONG_Y/2 - 15);
 					break;
 				case THREE:
-					graphicContext.drawString("P2 : " + Integer.toString(player.getScore()), SIZE_PONG_X/3, SIZE_PONG_Y/2 + 15);
+					graphicContext.drawString("P3 : " + Integer.toString(player.getScore()), SIZE_PONG_X/3, SIZE_PONG_Y/2 + 15);
 					break;
 				case FOUR:
-					graphicContext.drawString("P2 : " + Integer.toString(player.getScore()), 2*(SIZE_PONG_X)/3, SIZE_PONG_Y/2 + 15);
+					graphicContext.drawString("P4 : " + Integer.toString(player.getScore()), 2*(SIZE_PONG_X)/3, SIZE_PONG_Y/2 + 15);
 					break;
 				default:
 					break;
