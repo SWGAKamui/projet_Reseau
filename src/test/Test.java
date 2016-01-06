@@ -4,10 +4,7 @@ import java.awt.Point;
 import java.util.HashSet;
 import java.util.Set;
 
-import pong.gui.Ball;
-import pong.gui.Player;
-import pong.gui.PlayerID;
-import pong.gui.Racket;
+import pong.game.*;
 
 public class Test {	
 	public static void Display_result (Boolean cond){

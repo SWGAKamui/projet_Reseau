@@ -1,19 +1,16 @@
-package pong.gui;
+package pong.game;
 
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Dimension;
-import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -21,7 +18,9 @@ import java.util.Set;
 
 import javax.swing.JPanel;
 
-import sound.Son;
+import pong.network.*;
+import pong.menu.Son;
+import pong.menu.Victoire;
 
 /**
  * An Pong is a Java graphical container that extends the JPanel class in
@@ -61,7 +60,6 @@ public class Pong extends JPanel implements KeyListener {
 	 * Object Ball 
 	 */
 	private Ball ball;
-	
 
 	/**
 	 * Joueur local
@@ -72,14 +70,16 @@ public class Pong extends JPanel implements KeyListener {
 	 * Gestion du réseau
 	 */
 	private Network network;
-	
+
 	private Son audio;
+	
+	public static final String PATH_SOUND = "res/sound/duel_of_the_fates.wav";
 	
 	/**
 	 * Ensemble contenant les joueurs. 
 	 * Chaque joueur est composé de différents champs (score, socket, etc.), notamment le champ Racket (une raquette par joueur)
 	 */
-	protected Set<Player> setPlayers;
+	public Set<Player> setPlayers;
 	
 	/**
 	 * Gère l'envoi et la reception des requêtes, implémentation du protocole (délégation)
@@ -103,7 +103,7 @@ public class Pong extends JPanel implements KeyListener {
 		this.ball = new Ball();
 		this.setPlayers = new HashSet<Player>();	
 		this.network = new Network(this, localPort);
-		this.audio = new Son("sound/duel_of_the_fates.wav");
+		this.audio = new Son(PATH_SOUND);
 		audio.play();
 		this.localPlayer = new Player(PlayerID.ONE, network.getLocalHost(), network.getLocalPort());
 		this.setPreferredSize(new Dimension(SIZE_PONG_X, SIZE_PONG_Y));
@@ -118,7 +118,7 @@ public class Pong extends JPanel implements KeyListener {
 		this.ball = new Ball();
 		this.setPlayers = new HashSet<Player>();		
 		this.network = new Network(this, localPort, host, port);
-		this.audio = new Son("sound/duel_of_the_fates.wav");
+		this.audio = new Son(PATH_SOUND);
 		audio.play();
 		this.setPreferredSize(new Dimension(SIZE_PONG_X, SIZE_PONG_Y));
 		this.addKeyListener(this);
@@ -174,7 +174,6 @@ public class Pong extends JPanel implements KeyListener {
 	 */
 	public void updateGame(String payload) {
 		if (payload != null) {
-			System.out.println("Reception : " + payload);
 			protocolHandler.setPayload(payload);
 			protocolHandler.run();
 		}
@@ -211,7 +210,7 @@ public class Pong extends JPanel implements KeyListener {
 	
 	public Image background(){
 		try {
-		    return ImageIO.read(new File("image/background.png"));
+		    return ImageIO.read(new File("res/image/background.png"));
 		} catch (IOException exp) {
 	        exp.printStackTrace();
 	    }

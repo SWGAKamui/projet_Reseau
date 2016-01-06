@@ -1,4 +1,4 @@
-package pong.gui;
+package pong.game;
 
 import java.awt.Point;
 import java.awt.event.KeyEvent;
@@ -8,11 +8,11 @@ public class Racket extends PongItem {
 	/**
 	 * Path of the racket img
 	 */
-	public static final String PATH_RACKET_DEFAULT = "image/sabre_vert.png";
-	public static final String PATH_RACKET_ONE = "image/sabre_vert.png";
-	public static final String PATH_RACKET_TWO = "image/sabre_rouge.png";
-	public static final String PATH_RACKET_THREE = "image/sabre_bleu.png";
-	public static final String PATH_RACKET_FOUR = "image/sabre_violet.png";
+	public static final String PATH_RACKET_DEFAULT = "res/image/sabre_vert.png";
+	public static final String PATH_RACKET_ONE = "res/image/sabre_vert.png";
+	public static final String PATH_RACKET_TWO = "res/image/sabre_rouge.png";
+	public static final String PATH_RACKET_THREE = "res/image/sabre_bleu.png";
+	public static final String PATH_RACKET_FOUR = "res/image/sabre_violet.png";
 	
 	/**
 	 * Speed of racket (in pixels per second)

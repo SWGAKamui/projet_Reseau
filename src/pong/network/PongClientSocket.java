@@ -1,4 +1,4 @@
-package pong.gui;
+package pong.network;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -107,7 +107,6 @@ public class PongClientSocket {
 			buf.clear();
 			buf.put(payload.getBytes("UTF-8"));
 			buf.flip();
-			System.out.println("Write payload : " + payload);
 			
 			while(buf.hasRemaining()) {
 				sc.write(buf);

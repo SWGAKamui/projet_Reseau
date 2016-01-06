@@ -1,4 +1,4 @@
-package pong.gui;
+package pong.network;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;

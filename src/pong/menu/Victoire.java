@@ -1,8 +1,6 @@
-package pong.gui;
+package pong.menu;
 
 
-import java.awt.Color;
-import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -17,8 +15,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import sound.Son;
-
+import pong.game.Player;
 
 
 public class Victoire extends JFrame{
@@ -27,11 +24,11 @@ public class Victoire extends JFrame{
 
 	
 	public Victoire(Player player){
-		Son audio = new Son("sound/victory_theme.mp3");
+		Son audio = new Son("res/sound/victory_theme.mp3");
 		audio.play();
 		
 		try {			
-            BufferedImage img = ImageIO.read(new File("image/red-panda.jpg"));            
+            BufferedImage img = ImageIO.read(new File("res/image/red-panda.jpg"));            
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);                    
             frame.setContentPane(new JLabel(new ImageIcon(img)));
             frame.setLayout(new GridBagLayout());
@@ -50,6 +47,7 @@ public class Victoire extends JFrame{
             exp.printStackTrace();
         }
 	}
+	
 	public void print(){
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);

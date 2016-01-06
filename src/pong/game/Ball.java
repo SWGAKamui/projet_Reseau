@@ -1,15 +1,17 @@
-package pong.gui;
+package pong.game;
 
 import java.awt.Point;
 import java.util.Iterator;
 import java.util.Set;
+
+import pong.menu.Son;
 
 public class Ball extends PongItem {
 	
 	/**
 	 * Path of the ball img
 	 */
-	public static final String PATH_BALL = "image/death_star.png";
+	public static final String PATH_BALL = "res/image/death_star.png";
 	
 	/**
 	 * Speed of ball (in pixels per second)
@@ -118,6 +120,9 @@ public class Ball extends PongItem {
 	 * Met à jour la position et la vitesse de la balle après un rebond sur la raquette
 	 */
 	public void setCollision(Racket racket) {
+		Son audio = new Son("res/sound/collision.wav");
+		audio.play();
+		
 		switch (racket.getPlayerID()) {
 			case ONE:
 				setPositionX(racket.getPositionX() + racket.getWidth());

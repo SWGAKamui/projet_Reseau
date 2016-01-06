@@ -1,4 +1,4 @@
-package pong.gui;
+package pong.menu;
 
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -12,12 +12,15 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+import pong.game.Pong;
+
 public class Comment extends JFrame implements MouseListener{
 	private static final long serialVersionUID = 1L;
 	private JPanel pan = new JPanel();
 	private JButton boutonMenu = new JButton("Menu");
 	private JLabel strcomment1 = new JLabel("Principe du Pong classique");
-	private JLabel strcomment2 = new JLabel("Utiliser les fleches du clavier pour ce deplacer vers le haut ou vers le bas");
+	private JLabel strcomment2 = new JLabel("Utiliser les fleches du clavier pour se déplacer.");
+	private JLabel strcomment3 = new JLabel("Que la force du pong soit avec vous !");
 	
 	private boolean pressed = false;
 	
@@ -36,8 +39,10 @@ public class Comment extends JFrame implements MouseListener{
 		pan.setLayout(new GridLayout(4,1));
 		strcomment1.setHorizontalAlignment(SwingConstants.CENTER);
 		strcomment2.setHorizontalAlignment(SwingConstants.CENTER);
+		strcomment3.setHorizontalAlignment(SwingConstants.CENTER);
 		pan.add(strcomment1);
 		pan.add(strcomment2);
+		pan.add(strcomment3);
 		
 		pan.add(boutonMenu);
     	

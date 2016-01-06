@@ -1,4 +1,4 @@
-package pong.gui;
+package pong.game;
 
 import java.awt.Image;
 import java.awt.Point;

@@ -1,4 +1,4 @@
-package pong.gui;
+package pong.game;
 
 /**
  * Les différents ID possibles pour les joueurs

@@ -1,4 +1,4 @@
-package pong.gui;
+package pong.network;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -9,6 +9,9 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
+
+import pong.game.Player;
+import pong.game.Pong;
 
 /** On utilise le système de channel avec select pour ne pas rendre le accept et le read bloquants et éviter d'utiliser les
  * threads (problème de synchronisation)

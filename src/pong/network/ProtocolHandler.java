@@ -1,9 +1,12 @@
-package pong.gui;
+package pong.network;
 
 import java.awt.Point;
 import java.util.Iterator;
 
 import javax.swing.JOptionPane;
+
+import pong.game.*;
+
 
 /* Code à factoriser */
 
@@ -102,11 +105,7 @@ public class ProtocolHandler {
 		int positionBallX = Integer.parseInt(tab[1]);
 		int positionBallY = Integer.parseInt(tab[2]);
 				
-		Ball ball = pong.getBall();
-		System.out.println("Position de la balle en X " + ball.getPositionX());
-		System.out.println("positionBallX : " + positionBallX);
-		System.out.println("ball.geTPos+speed : " + (ball.getPositionX() + ball.getSpeedX()));
-		
+		Ball ball = pong.getBall();		
 		
 		/* Anti-cheat */
 		if ((positionBallX > (ball.getPositionX() + ball.getSpeedX()) && ball.getSpeedX() > 0) || 

@@ -1,4 +1,4 @@
-package pong.gui;
+package pong.game;
 
 /**
  * Un joueur possède un identifiant parmis {ONE, TWO, THREE, FOUR}, un score et une raquette.
